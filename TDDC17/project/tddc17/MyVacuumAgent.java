@@ -31,7 +31,7 @@ class Node implements Comparable<Node> {
 	@Override
 
 	public int compareTo(Node no) {
-		
+
 		int xcord = this.xcord.compareTo(no.xcord);
 		return xcord == 0 ? this.ycord.compareTo(no.xcord) : xcord;
 	}
@@ -293,8 +293,9 @@ class MyAgentProgram implements AgentProgram {
 			Node newNode = pq.get(0);
 
 			pq.remove(0);
-			//System.out.println(newNode.xcord + "s" + newNode.ycord + "nya noden");
-			visited.add(newNode);
+			// System.out.println(newNode.xcord + "s" + newNode.ycord + "nya noden");
+			// Varför lägger vi in noden vi letar efter i visited?
+			//visited.add(newNode);
 			currentNode = newNode;
 			point = new Point(newNode.xcord, newNode.ycord);
 			path(point);
@@ -318,7 +319,7 @@ class MyAgentProgram implements AgentProgram {
 			System.out.println("Processing percepts after the last execution of moveToRandomStartPosition()");
 			state.agent_last_action = state.ACTION_SUCK;
 			currentNode = new Node(state.agent_x_position, state.agent_y_position, 0, null);
-			visited.add(currentNode);
+			//visited.add(currentNode);
 			return LIUVacuumEnvironment.ACTION_SUCK;
 		}
 
@@ -371,6 +372,7 @@ class MyAgentProgram implements AgentProgram {
 		if (dirt) {
 			System.out.println("DIRT -> choosing SUCK action!");
 			state.agent_last_action = state.ACTION_SUCK;
+			
 			return LIUVacuumEnvironment.ACTION_SUCK;
 		}
 
@@ -391,7 +393,7 @@ class MyAgentProgram implements AgentProgram {
 //				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 //			}
 //		}
-		//System.out.println(northCounter + southCounter + eastCounter + westCounter);
+		// System.out.println(northCounter + southCounter + eastCounter + westCounter);
 		if (northCounter + southCounter + eastCounter + westCounter == 0) {
 			// System.out.println("HÖR");
 			visited.add(currentNode);
@@ -408,45 +410,62 @@ class MyAgentProgram implements AgentProgram {
 		// westCounter + "East" + eastCounter);
 		if (northCounter > 0) {
 			if (state.agent_direction != state.NORTH) {
+				//addNeigh(currentNode);
 				return pivot();
 			} else {
 				state.agent_last_action = state.ACTION_MOVE_FORWARD;
 				northCounter--;
+				addNeigh(currentNode);
 				// state.agent_y_position++;
 				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 			}
 		} else if (southCounter > 0) {
 			if (state.agent_direction != state.SOUTH) {
+				//addNeigh(currentNode);
 				return pivot();
 			} else {
 				state.agent_last_action = state.ACTION_MOVE_FORWARD;
 				southCounter--;
+				addNeigh(currentNode);
 				// state.agent_y_position--;
 				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 			}
 		} else if (eastCounter > 0) {
 			if (state.agent_direction != state.EAST) {
+				//addNeigh(currentNode);
 				return pivot();
 			} else {
 				state.agent_last_action = state.ACTION_MOVE_FORWARD;
 				eastCounter--;
+				addNeigh(currentNode);
 				// state.agent_x_position++;
 				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 			}
 		} else if (westCounter > 0) {
 			if (state.agent_direction != state.WEST) {
+				//addNeigh(currentNode);
 				return pivot();
 			} else {
 				state.agent_last_action = state.ACTION_MOVE_FORWARD;
 				westCounter--;
+				addNeigh(currentNode);
 				// state.agent_x_position--;
 				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 			}
 		} else {
 			// return NoOpAction.NO_OP;
-			state.updateWorld(state.agent_x_position , state.agent_y_position, state.HOME); 
+			state.updateWorld(state.agent_x_position, state.agent_y_position, state.HOME);
 			state.agent_last_action = state.ACTION_NONE;
-			return  NoOpAction.NO_OP;
+			System.out.println("Visited:");
+			for (int j = 0; j < visited.size(); j++) {
+				System.out.println("X: " + visited.get(j).xcord + " Y: " + visited.get(j).ycord);
+			}
+			System.out.println("Queue:");
+			System.out.println("Current node X: " + currentNode.xcord + "Current node Y:" + currentNode.ycord);
+			for (int j = 0; j < pq.size(); j++) {
+				System.out.println("X: " + pq.get(j).xcord + " Y: " + pq.get(j).ycord);
+			}
+			return NoOpAction.NO_OP;
 		}
 
 	}
