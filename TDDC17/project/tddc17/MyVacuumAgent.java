@@ -126,7 +126,7 @@ class MyAgentProgram implements AgentProgram {
 	public ArrayList<Point> queueContain = new ArrayList<Point>();
 	public Node currentNode;
 	public Node searchNode;
-	public int iterationCounter = 1000;
+	public int iterationCounter = 10000;
 	public int northCounter = 0;
 	public int southCounter = 0;
 	public int westCounter = 0;
@@ -206,16 +206,80 @@ class MyAgentProgram implements AgentProgram {
 
 	// }
 
-	public Action pivot() {
-		if (state.agent_direction == state.WEST) {
-			state.agent_direction = state.NORTH;
-			state.agent_last_action = state.ACTION_TURN_RIGHT;
-			return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
-		} else {
-			state.agent_direction++;
-			state.agent_last_action = state.ACTION_TURN_RIGHT;
-			return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
-		}
+	public Action pivot(int desired_dir) {
+
+		if (desired_dir == state.NORTH) {
+			if (state.agent_direction == state.WEST) {
+				state.agent_direction = state.NORTH;
+				state.agent_last_action = state.ACTION_TURN_RIGHT;
+				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+			} else if (state.agent_direction == state.EAST) {
+				state.agent_direction = state.NORTH;
+				state.agent_last_action = state.ACTION_TURN_LEFT;
+				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+			} else if (state.agent_direction == state.SOUTH) {
+				state.agent_direction = state.WEST;
+				state.agent_last_action = state.ACTION_TURN_RIGHT;
+				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+			}
+			
+		} else if (desired_dir == state.SOUTH) {
+			if (state.agent_direction == state.WEST) {
+				state.agent_direction = state.SOUTH;
+				state.agent_last_action = state.ACTION_TURN_LEFT;
+				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+			} else if (state.agent_direction == state.EAST) {
+				state.agent_direction = state.SOUTH;
+				state.agent_last_action = state.ACTION_TURN_RIGHT;
+				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+			} else if (state.agent_direction == state.NORTH) {
+				state.agent_direction = state.EAST;
+				state.agent_last_action = state.ACTION_TURN_RIGHT;
+				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+				
+				} 
+			}else if (desired_dir == state.WEST) {
+				if (state.agent_direction == state.SOUTH) {
+					state.agent_direction = state.WEST;
+					state.agent_last_action = state.ACTION_TURN_RIGHT;
+					return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+				} else if (state.agent_direction == state.EAST) {
+					state.agent_direction = state.SOUTH;
+					state.agent_last_action = state.ACTION_TURN_RIGHT;
+					return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+				} else if (state.agent_direction == state.NORTH) {
+					state.agent_direction = state.WEST;
+					state.agent_last_action = state.ACTION_TURN_LEFT;
+					return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+				}
+			} else if (desired_dir == state.EAST) {
+				if (state.agent_direction == state.SOUTH) {
+					state.agent_direction = state.EAST;
+					state.agent_last_action = state.ACTION_TURN_LEFT;
+					return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+				} else if (state.agent_direction == state.WEST) {
+					state.agent_direction = state.NORTH;
+					state.agent_last_action = state.ACTION_TURN_RIGHT;
+					return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+				} else if (state.agent_direction == state.NORTH) {
+					state.agent_direction = state.EAST;
+					state.agent_last_action = state.ACTION_TURN_RIGHT;
+					return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+				}
+			} 
+		return null;
+		
+		
+
+//		if (state.agent_direction == state.WEST) {
+//			state.agent_direction = state.NORTH;
+//			state.agent_last_action = state.ACTION_TURN_RIGHT;
+//			return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+//		} else {
+//			state.agent_direction++;
+//			state.agent_last_action = state.ACTION_TURN_RIGHT;
+//			return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+//		}
 
 	}
 
@@ -285,6 +349,8 @@ class MyAgentProgram implements AgentProgram {
 		return new_node;
 	}
 
+	
+	
 	public void search() {
 		Point point;
 		addNeigh(currentNode);
@@ -295,7 +361,7 @@ class MyAgentProgram implements AgentProgram {
 			pq.remove(0);
 			// System.out.println(newNode.xcord + "s" + newNode.ycord + "nya noden");
 			// Varför lägger vi in noden vi letar efter i visited?
-			//visited.add(newNode);
+			visited.add(newNode);
 			currentNode = newNode;
 			point = new Point(newNode.xcord, newNode.ycord);
 			path(point);
@@ -319,7 +385,7 @@ class MyAgentProgram implements AgentProgram {
 			System.out.println("Processing percepts after the last execution of moveToRandomStartPosition()");
 			state.agent_last_action = state.ACTION_SUCK;
 			currentNode = new Node(state.agent_x_position, state.agent_y_position, 0, null);
-			//visited.add(currentNode);
+			// visited.add(currentNode);
 			return LIUVacuumEnvironment.ACTION_SUCK;
 		}
 
@@ -372,7 +438,7 @@ class MyAgentProgram implements AgentProgram {
 		if (dirt) {
 			System.out.println("DIRT -> choosing SUCK action!");
 			state.agent_last_action = state.ACTION_SUCK;
-			
+
 			return LIUVacuumEnvironment.ACTION_SUCK;
 		}
 
@@ -404,14 +470,14 @@ class MyAgentProgram implements AgentProgram {
 			// System.out.println("Bump");
 			// System.out.println(currentNode.xcord + "BumpCurrent" + currentNode.ycord);
 			visited.add(currentNode);
-			search();
+			// search();
 		}
 		// System.out.println("Syd" + southCounter + "Nord" + northCounter + "Väst" +
 		// westCounter + "East" + eastCounter);
 		if (northCounter > 0) {
 			if (state.agent_direction != state.NORTH) {
-				//addNeigh(currentNode);
-				return pivot();
+				// addNeigh(currentNode);
+				return pivot(state.NORTH);
 			} else {
 				state.agent_last_action = state.ACTION_MOVE_FORWARD;
 				northCounter--;
@@ -421,8 +487,8 @@ class MyAgentProgram implements AgentProgram {
 			}
 		} else if (southCounter > 0) {
 			if (state.agent_direction != state.SOUTH) {
-				//addNeigh(currentNode);
-				return pivot();
+				// addNeigh(currentNode);
+				return pivot(state.SOUTH);
 			} else {
 				state.agent_last_action = state.ACTION_MOVE_FORWARD;
 				southCounter--;
@@ -432,8 +498,8 @@ class MyAgentProgram implements AgentProgram {
 			}
 		} else if (eastCounter > 0) {
 			if (state.agent_direction != state.EAST) {
-				//addNeigh(currentNode);
-				return pivot();
+				// addNeigh(currentNode);
+				return pivot(state.EAST);
 			} else {
 				state.agent_last_action = state.ACTION_MOVE_FORWARD;
 				eastCounter--;
@@ -443,8 +509,8 @@ class MyAgentProgram implements AgentProgram {
 			}
 		} else if (westCounter > 0) {
 			if (state.agent_direction != state.WEST) {
-				//addNeigh(currentNode);
-				return pivot();
+				// addNeigh(currentNode);
+				return pivot(state.WEST);
 			} else {
 				state.agent_last_action = state.ACTION_MOVE_FORWARD;
 				westCounter--;
@@ -465,6 +531,8 @@ class MyAgentProgram implements AgentProgram {
 			for (int j = 0; j < pq.size(); j++) {
 				System.out.println("X: " + pq.get(j).xcord + " Y: " + pq.get(j).ycord);
 			}
+			int counter = northCounter + southCounter + eastCounter + westCounter;
+			System.out.println(counter);
 			return NoOpAction.NO_OP;
 		}
 
