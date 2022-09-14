@@ -174,12 +174,19 @@ class MyAgentProgram implements AgentProgram {
 //
 //	}
 
-	public void path(Point coord) {
+	public void pathTo(ArrayList<Node> path) {
 		int xpath;
 		int ypath;
+		Point newPoint = new Point(0,0);
+		
+		
+		newPoint.setLocation(path.get(0).xcord, path.get(0).ycord);
+		path.remove(0);
+		
+		
 
-		xpath = (int) (coord.getX() - state.agent_x_position);
-		ypath = (int) (coord.getY() - state.agent_y_position);
+		xpath = (int) (newPoint.getX() - state.agent_x_position);
+		ypath = (int) (newPoint.getY() - state.agent_y_position);
 		// System.out.println(coord.getX() + "mallan" + coord.getY());
 		if (ypath < 0) {
 			northCounter = Math.abs(ypath);
@@ -294,7 +301,7 @@ class MyAgentProgram implements AgentProgram {
 				// System.out.println("Visited ar inte tom");
 				if ((visited.get(i).xcord == n.xcord && visited.get(i).ycord == n.ycord)) {
 					// System.out.println("Visited hitta ingen lika");
-					System.out.println("hej");
+					
 					return false;
 
 				}
@@ -354,23 +361,43 @@ class MyAgentProgram implements AgentProgram {
 	
 	public void search() {
 		Point point;
+		currentNode.xcord = state.agent_x_position;
+		currentNode.ycord = state.agent_y_position;
 		addNeigh(currentNode);
 		Collections.sort(pq);
+		ArrayList<Node> path = new ArrayList<Node>();
 		if (!pq.isEmpty()) {
 			Node newNode = pq.get(0);
-
+			System.out.println("X: " + state.agent_x_position + " Y: " + state.agent_y_position);
 			pq.remove(0);
 			// System.out.println(newNode.xcord + "s" + newNode.ycord + "nya noden");
 			// Varför lägger vi in noden vi letar efter i visited?
 			visited.add(newNode);
-			currentNode = newNode;
+			//currentNode = newNode;
 			point = new Point(newNode.xcord, newNode.ycord);
-			path(point);
+			
+			System.out.println("Path" + path(currentNode, newNode).get(0).xcord +"x" + path(currentNode, newNode).get(0).ycord);
+			System.out.println("Path:" + path(currentNode, newNode));
+			
+			path = path(currentNode, newNode);
+			pathTo(path);
 		} else {
-			point = new Point(1, 1);
+			Node home = new Node(1,1,0,null);
+			path.add(home);
+			pathTo(path);
 		}
 
-		path(point);
+		
+	}
+	
+	
+	public ArrayList<Node> path(Node start, Node goalNode) {
+		ArrayList<Node> path = new ArrayList<Node>();
+		while (goalNode != start) {
+			path.add(goalNode);
+			goalNode = goalNode.parent;
+		}
+		return path;
 	}
 
 	@Override
@@ -471,7 +498,7 @@ class MyAgentProgram implements AgentProgram {
 			// System.out.println("Bump");
 			// System.out.println(currentNode.xcord + "BumpCurrent" + currentNode.ycord);
 			visited.add(currentNode);
-			// search();
+			//search();
 		}
 		// System.out.println("Syd" + southCounter + "Nord" + northCounter + "Väst" +
 		// westCounter + "East" + eastCounter);
