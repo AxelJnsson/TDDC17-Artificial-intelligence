@@ -294,6 +294,7 @@ class MyAgentProgram implements AgentProgram {
 				// System.out.println("Visited ar inte tom");
 				if ((visited.get(i).xcord == n.xcord && visited.get(i).ycord == n.ycord)) {
 					// System.out.println("Visited hitta ingen lika");
+					System.out.println("hej");
 					return false;
 
 				}

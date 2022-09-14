@@ -1,0 +1,27 @@
+Laboration 1:
+
+Some things that are important to know for task 1 is explained below. 
+
+Counters: There is a counter for each direction; north, east, south and west. The counters works in a way that if the agent looks for a path to a new node the counters are updated for how many positions in each direction there are to the new node. After the agent has moved in a direction the counter for that direction is subtracted by one. 
+
+Pivot function:
+The desired direction of the agent is sent with the pivot function. The function then checks what direction the agent is in and depending on which direction the desired direction is in the agent pivots in different directions. Example: desired direction is north and the agent is facing east, then the agent will pivot left. If its facing west it will pivot right and if its facing south it will pivot left to east and then in the next iteration it will pivot left to north. 
+
+addNeigh()-function:
+The add neighbour function checks if the neighbours of a given node is in either the queue or visited arrays. If they are not they are added to the queue.
+
+The agent in Task 1 works in the following way
+
+- After the agent has moved to a random position the agent moves to the position (1,1).
+-  When the agent is at (1,1) it searches for a new path to go to. It does this by checking if the counters are 0, i.e. it’s at the searched for nodes position. 
+- The search adds the current nodes neighbours to the queue if they are not already in the queue or have been visited.
+- The queue is sorted to then create a new node which is assigned the first node in the queue and then it’s removed in the queue.
+- A new point is created which is given the searched for nodes x and y position. The path to this node is then calculated
+- The path function calculates the distance to the new node in x and y coordinates. 
+- Here the counters are updated so that they can be used in the execute function. 
+- If a bump happens the node (where the wall is) is added to the visited array.
+- When it is time for the agent to move it checks all the counters to see if it needs to move in any direction. All these counters works in the same way so we only describe one below.
+- If the north counter is not equal to 0 and the direction of the agent is not north the agent pivots to north with the pivot function
+- When the direction of the agent aligns with the desired direction the agent moves forward and the counter is subtracted by one. 
+- This then continues until the searched for node is found and then if there is a queue the agent searches for that node. 
+- When the queue is empty and all counters are 0 the agent returns to the home position and turns off. 
