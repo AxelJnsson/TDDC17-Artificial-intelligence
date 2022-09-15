@@ -124,13 +124,16 @@ class MyAgentProgram implements AgentProgram {
 	public ArrayList<Node> pq = new ArrayList<Node>();
 	public ArrayList<Node> visited = new ArrayList<Node>();
 	public ArrayList<Point> queueContain = new ArrayList<Point>();
+	public ArrayList<Node> path = new ArrayList<Node>();
 	public Node currentNode;
-	public Node searchNode;
+	public Node goalNode;
 	public int iterationCounter = 10000;
 	public int northCounter = 0;
 	public int southCounter = 0;
 	public int westCounter = 0;
 	public int eastCounter = 0;
+	public int totalCounter = 0;
+	public boolean goneHome = false;
 	public MyAgentState state = new MyAgentState();
 
 	// moves the Agent to a random start position
@@ -177,16 +180,13 @@ class MyAgentProgram implements AgentProgram {
 	public void pathTo(ArrayList<Node> path) {
 		int xpath;
 		int ypath;
-		Point newPoint = new Point(0,0);
 		
-		
-		newPoint.setLocation(path.get(0).xcord, path.get(0).ycord);
-		path.remove(0);
-		
-		
+		Point newPoint = new Point(0, 0);
 
-		xpath = (int) (newPoint.getX() - state.agent_x_position);
-		ypath = (int) (newPoint.getY() - state.agent_y_position);
+		newPoint.setLocation(path.get(path.size()-1).xcord, path.get(path.size()-1).ycord);
+
+		xpath = (int) (newPoint.getX() - currentNode.xcord);
+		ypath = (int) (newPoint.getY() - currentNode.ycord);
 		// System.out.println(coord.getX() + "mallan" + coord.getY());
 		if (ypath < 0) {
 			northCounter = Math.abs(ypath);
@@ -203,7 +203,60 @@ class MyAgentProgram implements AgentProgram {
 			// moveEast(ypath);
 			eastCounter = Math.abs(xpath);
 		}
+		totalCounter =  northCounter + southCounter + eastCounter + westCounter;
+		
+		
+		
+	}
 
+	public Action forward() {
+		state.agent_last_action = state.ACTION_MOVE_FORWARD;
+		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+	}
+
+	public Action walk() {
+
+		if (northCounter > 0) {
+			if (state.agent_direction != state.NORTH) {
+				// addNeigh(currentNode);
+				return pivot(state.NORTH);
+			} else {
+				northCounter--;
+				// addNeigh(currentNode);
+				// state.agent_y_position++;
+				return forward();
+			}
+		} else if (southCounter > 0) {
+			if (state.agent_direction != state.SOUTH) {
+				// addNeigh(currentNode);
+				return pivot(state.SOUTH);
+			} else {
+				southCounter--;
+				// addNeigh(currentNode);
+				// state.agent_y_position--;
+				return forward();
+			}
+		} else if (eastCounter > 0) {
+			if (state.agent_direction != state.EAST) {
+				// addNeigh(currentNode);
+				return pivot(state.EAST);
+			} else {
+				eastCounter--;
+				// addNeigh(currentNode);
+				// state.agent_x_position++;
+				return forward();
+			}
+		} else {//else if (westCounter > 0) {
+			if (state.agent_direction != state.WEST) {
+				// addNeigh(currentNode);
+				return  pivot(state.WEST);
+			} else {
+				westCounter--;
+				// addNeigh(currentNode);
+				// state.agent_x_position--;
+				return forward();
+			}
+		}
 	}
 
 	// public moveNorth(int steps)
@@ -229,7 +282,7 @@ class MyAgentProgram implements AgentProgram {
 				state.agent_last_action = state.ACTION_TURN_RIGHT;
 				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
 			}
-			
+
 		} else if (desired_dir == state.SOUTH) {
 			if (state.agent_direction == state.WEST) {
 				state.agent_direction = state.SOUTH;
@@ -243,40 +296,38 @@ class MyAgentProgram implements AgentProgram {
 				state.agent_direction = state.EAST;
 				state.agent_last_action = state.ACTION_TURN_RIGHT;
 				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
-				
-				} 
-			}else if (desired_dir == state.WEST) {
-				if (state.agent_direction == state.SOUTH) {
-					state.agent_direction = state.WEST;
-					state.agent_last_action = state.ACTION_TURN_RIGHT;
-					return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
-				} else if (state.agent_direction == state.EAST) {
-					state.agent_direction = state.SOUTH;
-					state.agent_last_action = state.ACTION_TURN_RIGHT;
-					return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
-				} else if (state.agent_direction == state.NORTH) {
-					state.agent_direction = state.WEST;
-					state.agent_last_action = state.ACTION_TURN_LEFT;
-					return LIUVacuumEnvironment.ACTION_TURN_LEFT;
-				}
-			} else if (desired_dir == state.EAST) {
-				if (state.agent_direction == state.SOUTH) {
-					state.agent_direction = state.EAST;
-					state.agent_last_action = state.ACTION_TURN_LEFT;
-					return LIUVacuumEnvironment.ACTION_TURN_LEFT;
-				} else if (state.agent_direction == state.WEST) {
-					state.agent_direction = state.NORTH;
-					state.agent_last_action = state.ACTION_TURN_RIGHT;
-					return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
-				} else if (state.agent_direction == state.NORTH) {
-					state.agent_direction = state.EAST;
-					state.agent_last_action = state.ACTION_TURN_RIGHT;
-					return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
-				}
-			} 
+
+			}
+		} else if (desired_dir == state.WEST) {
+			if (state.agent_direction == state.SOUTH) {
+				state.agent_direction = state.WEST;
+				state.agent_last_action = state.ACTION_TURN_RIGHT;
+				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+			} else if (state.agent_direction == state.EAST) {
+				state.agent_direction = state.SOUTH;
+				state.agent_last_action = state.ACTION_TURN_RIGHT;
+				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+			} else if (state.agent_direction == state.NORTH) {
+				state.agent_direction = state.WEST;
+				state.agent_last_action = state.ACTION_TURN_LEFT;
+				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+			}
+		} else if (desired_dir == state.EAST) {
+			if (state.agent_direction == state.SOUTH) {
+				state.agent_direction = state.EAST;
+				state.agent_last_action = state.ACTION_TURN_LEFT;
+				return LIUVacuumEnvironment.ACTION_TURN_LEFT;
+			} else if (state.agent_direction == state.WEST) {
+				state.agent_direction = state.NORTH;
+				state.agent_last_action = state.ACTION_TURN_RIGHT;
+				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+			} else if (state.agent_direction == state.NORTH) {
+				state.agent_direction = state.EAST;
+				state.agent_last_action = state.ACTION_TURN_RIGHT;
+				return LIUVacuumEnvironment.ACTION_TURN_RIGHT;
+			}
+		}
 		return null;
-		
-		
 
 //		if (state.agent_direction == state.WEST) {
 //			state.agent_direction = state.NORTH;
@@ -300,8 +351,6 @@ class MyAgentProgram implements AgentProgram {
 			for (int i = 0; i < visited.size(); i++) {
 				// System.out.println("Visited ar inte tom");
 				if ((visited.get(i).xcord == n.xcord && visited.get(i).ycord == n.ycord)) {
-					// System.out.println("Visited hitta ingen lika");
-					
 					return false;
 
 				}
@@ -353,19 +402,17 @@ class MyAgentProgram implements AgentProgram {
 	}
 
 	public Node addNode(int xNeigh, int yNeigh, Node parentNode) {
-		Node new_node = new Node(state.agent_x_position + xNeigh, state.agent_y_position + yNeigh, 0, parentNode);
+		Node new_node = new Node(currentNode.xcord + xNeigh, currentNode.ycord + yNeigh, 0, parentNode);
 		return new_node;
 	}
 
-	
-	
 	public void search() {
 		Point point;
 		currentNode.xcord = state.agent_x_position;
 		currentNode.ycord = state.agent_y_position;
 		addNeigh(currentNode);
-		Collections.sort(pq);
-		ArrayList<Node> path = new ArrayList<Node>();
+		// Collections.sort(pq);
+		
 		if (!pq.isEmpty()) {
 			Node newNode = pq.get(0);
 			System.out.println("X: " + state.agent_x_position + " Y: " + state.agent_y_position);
@@ -373,29 +420,35 @@ class MyAgentProgram implements AgentProgram {
 			// System.out.println(newNode.xcord + "s" + newNode.ycord + "nya noden");
 			// Varför lägger vi in noden vi letar efter i visited?
 			visited.add(newNode);
-			//currentNode = newNode;
+			// currentNode = newNode;
 			point = new Point(newNode.xcord, newNode.ycord);
-			
-			System.out.println("Path" + path(currentNode, newNode).get(0).xcord +"x" + path(currentNode, newNode).get(0).ycord);
-			System.out.println("Path:" + path(currentNode, newNode));
-			
-			path = path(currentNode, newNode);
-			pathTo(path);
+
+			// System.out.println("Path" + path(currentNode, newNode).get(0).xcord +"x" +
+			// path(currentNode, newNode).get(0).ycord);
+			// System.out.println("Path:" + path(currentNode, newNode));
+
+			goalNode = newNode;
+			path = path(currentNode);
+			//pathTo(path);
 		} else {
-			Node home = new Node(1,1,0,null);
+			Node home = new Node(1, 1, 0, null);
 			path.add(home);
 			pathTo(path);
+			goneHome = true;
 		}
 
-		
 	}
-	
-	
-	public ArrayList<Node> path(Node start, Node goalNode) {
-		ArrayList<Node> path = new ArrayList<Node>();
-		while (goalNode != start) {
-			path.add(goalNode);
-			goalNode = goalNode.parent;
+
+	public ArrayList<Node> path(Node start) {
+		path = new ArrayList<Node>();
+		Node goal = goalNode;
+		
+
+		while (!(goal.xcord == start.xcord && goal.ycord == start.ycord)) {
+			System.out.println(goal.xcord + "goal" + goal.ycord);
+			System.out.println(start.xcord + "start" + start.ycord);
+			path.add(goal);
+			goal = goal.parent;
 		}
 		return path;
 	}
@@ -442,15 +495,19 @@ class MyAgentProgram implements AgentProgram {
 		if (bump) {
 			switch (state.agent_direction) {
 			case MyAgentState.NORTH:
+				//visited.add(currentNode);
 				state.updateWorld(state.agent_x_position, state.agent_y_position - 1, state.WALL);
 				break;
 			case MyAgentState.EAST:
+				//visited.add(currentNode);
 				state.updateWorld(state.agent_x_position + 1, state.agent_y_position, state.WALL);
 				break;
 			case MyAgentState.SOUTH:
+				//visited.add(currentNode);
 				state.updateWorld(state.agent_x_position, state.agent_y_position + 1, state.WALL);
 				break;
 			case MyAgentState.WEST:
+				//visited.add(currentNode);
 				state.updateWorld(state.agent_x_position - 1, state.agent_y_position, state.WALL);
 				break;
 			}
@@ -488,65 +545,92 @@ class MyAgentProgram implements AgentProgram {
 //			}
 //		}
 		// System.out.println(northCounter + southCounter + eastCounter + westCounter);
-		if (northCounter + southCounter + eastCounter + westCounter == 0) {
-			// System.out.println("HÖR");
-			visited.add(currentNode);
+		currentNode.xcord = state.agent_x_position;
+		currentNode.ycord = state.agent_y_position;
+		visited.add(currentNode);
+		addNeigh(currentNode);
+		if (goalNode == null) {
+			System.out.println("är null");
 			search();
-		}
+		} else if (goalNode.xcord == currentNode.xcord && goalNode.ycord == currentNode.ycord) {
+			// System.out.println("HÖR");
+			//visited.add(currentNode);
+			search();
+			System.out.println("Är vid mål");
+			System.out.println(goalNode.xcord + " GoalNode " + goalNode.ycord);
+		} else if (bump) {
+			search();
+		}else {
+			totalCounter = westCounter + eastCounter + northCounter + southCounter;
 
-		if (bump) {
+			if (totalCounter > 0 ) {
+				System.out.println("total " + totalCounter);
+				System.out.println("Current " + currentNode.xcord + " " + currentNode.ycord);
+				System.out.println("State agent  " + state.agent_x_position + " " + state.agent_y_position);
+				//addNeigh(currentNode);
+				return walk();
+			}else {
+			System.out.println("pathToPath");
+			pathTo(path);
+			}
+		}
+		
+		
+		
+
+	
 			// System.out.println("Bump");
 			// System.out.println(currentNode.xcord + "BumpCurrent" + currentNode.ycord);
-			visited.add(currentNode);
-			//search();
-		}
+			// visited.add(currentNode);
+			// search();
+		
 		// System.out.println("Syd" + southCounter + "Nord" + northCounter + "Väst" +
 		// westCounter + "East" + eastCounter);
-		if (northCounter > 0) {
-			if (state.agent_direction != state.NORTH) {
-				// addNeigh(currentNode);
-				return pivot(state.NORTH);
-			} else {
-				state.agent_last_action = state.ACTION_MOVE_FORWARD;
-				northCounter--;
-				addNeigh(currentNode);
-				// state.agent_y_position++;
-				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
-			}
-		} else if (southCounter > 0) {
-			if (state.agent_direction != state.SOUTH) {
-				// addNeigh(currentNode);
-				return pivot(state.SOUTH);
-			} else {
-				state.agent_last_action = state.ACTION_MOVE_FORWARD;
-				southCounter--;
-				addNeigh(currentNode);
-				// state.agent_y_position--;
-				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
-			}
-		} else if (eastCounter > 0) {
-			if (state.agent_direction != state.EAST) {
-				// addNeigh(currentNode);
-				return pivot(state.EAST);
-			} else {
-				state.agent_last_action = state.ACTION_MOVE_FORWARD;
-				eastCounter--;
-				addNeigh(currentNode);
-				// state.agent_x_position++;
-				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
-			}
-		} else if (westCounter > 0) {
-			if (state.agent_direction != state.WEST) {
-				// addNeigh(currentNode);
-				return pivot(state.WEST);
-			} else {
-				state.agent_last_action = state.ACTION_MOVE_FORWARD;
-				westCounter--;
-				addNeigh(currentNode);
-				// state.agent_x_position--;
-				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
-			}
-		} else {
+//		if (northCounter > 0) {
+//			if (state.agent_direction != state.NORTH) {
+//				// addNeigh(currentNode);
+//				return pivot(state.NORTH);
+//			} else {
+//				state.agent_last_action = state.ACTION_MOVE_FORWARD;
+//				northCounter--;
+//				// addNeigh(currentNode);
+//				// state.agent_y_position++;
+//				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+//			}
+//		} else if (southCounter > 0) {
+//			if (state.agent_direction != state.SOUTH) {
+//				// addNeigh(currentNode);
+//				return pivot(state.SOUTH);
+//			} else {
+//				state.agent_last_action = state.ACTION_MOVE_FORWARD;
+//				southCounter--;
+//				// addNeigh(currentNode);
+//				// state.agent_y_position--;
+//				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+//			}
+//		} else if (eastCounter > 0) {
+//			if (state.agent_direction != state.EAST) {
+//				// addNeigh(currentNode);
+//				return pivot(state.EAST);
+//			} else {
+//				state.agent_last_action = state.ACTION_MOVE_FORWARD;
+//				eastCounter--;
+//				// addNeigh(currentNode);
+//				// state.agent_x_position++;
+//				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+//			}
+//		} else if (westCounter > 0) {
+//			if (state.agent_direction != state.WEST) {
+//				// addNeigh(currentNode);
+//				return pivot(state.WEST);
+//			} else {
+//				state.agent_last_action = state.ACTION_MOVE_FORWARD;
+//				westCounter--;
+//				// addNeigh(currentNode);
+//				// state.agent_x_position--;
+//				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
+//			}
+		if (goneHome == true) {
 			// return NoOpAction.NO_OP;
 			state.updateWorld(state.agent_x_position, state.agent_y_position, state.HOME);
 			state.agent_last_action = state.ACTION_NONE;
@@ -562,6 +646,10 @@ class MyAgentProgram implements AgentProgram {
 			int counter = northCounter + southCounter + eastCounter + westCounter;
 			System.out.println(counter);
 			return NoOpAction.NO_OP;
+		} else {
+			//DENNA ÄR BARA FÖR ATT HA NGNG RETURN FYLLER NOLL FUNKTION
+			state.agent_last_action = state.ACTION_SUCK;
+			 return LIUVacuumEnvironment.ACTION_SUCK;
 		}
 
 	}
