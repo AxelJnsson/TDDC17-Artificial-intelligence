@@ -447,6 +447,8 @@ class MyAgentProgram implements AgentProgram {
 
 	public ArrayList<Node> path(Node start) {
 		path = new ArrayList<Node>();
+		ArrayList <Node> startPath = new ArrayList<Node>();
+		Node startNode = new Node(start.xcord, start.ycord, start.weight, start.parent);
 		
 		Node goal = new Node(goalNode.xcord, goalNode.ycord, goalNode.weight, goalNode.parent);
 
@@ -455,9 +457,18 @@ class MyAgentProgram implements AgentProgram {
 			//Systen.out.println(start.xcord + "start" + start.ycord);
 			path.add(new Node(goal.xcord, goal.ycord, goal.weight, goal.parent));
 			if (goal.parent == null) {
+
+				while(startNode.parent != null) {
+					startPath.add(startNode);
+					startNode = new Node (startNode.parent.xcord, startNode.parent.ycord, startNode.parent.weight, startNode.parent.parent);
+				}
+				for (int i = 0; i < startPath.size(); i ++) {
+					path.add(startPath.get(startPath.size()-i-1));
+				}
 				break;
+				
 			}
-			goal = goal.parent;
+			goal = new Node (goal.parent.xcord, goal.parent.ycord, goal.parent.weight, goal.parent.parent);
 		}
 		System.out.println("GoalX: " + goalNode.xcord + "GoalY: " + goalNode.ycord);
 		System.out.println("Path:");
