@@ -408,46 +408,46 @@ class MyAgentProgram implements AgentProgram {
 
 	public void search() {
 		Point point;
-		currentNode.xcord = state.agent_x_position;
-		currentNode.ycord = state.agent_y_position;
-		addNeigh(currentNode);
+		//currentNode.xcord = state.agent_x_position;
+		//currentNode.ycord = state.agent_y_position;
+		//addNeigh(currentNode);
 		// Collections.sort(pq);
 		
 		if (!pq.isEmpty()) {
-			Node newNode = pq.get(0);
+			Node newNode = new Node(pq.get(0).xcord, pq.get(0).ycord, pq.get(0).weight, pq.get(0).parent);
 			System.out.println("X: " + state.agent_x_position + " Y: " + state.agent_y_position);
 			pq.remove(0);
 			// System.out.println(newNode.xcord + "s" + newNode.ycord + "nya noden");
 			// Varför lägger vi in noden vi letar efter i visited?
-			visited.add(newNode);
+			//visited.add(newNode);
 			// currentNode = newNode;
 			point = new Point(newNode.xcord, newNode.ycord);
 
 			// System.out.println("Path" + path(currentNode, newNode).get(0).xcord +"x" +
 			// path(currentNode, newNode).get(0).ycord);
 			// System.out.println("Path:" + path(currentNode, newNode));
-
-			goalNode = newNode;
+			System.out.println(newNode.xcord + " NewNode xcord");
+			goalNode = new Node(newNode.xcord, newNode.ycord, newNode.weight, newNode.parent);
 			path = path(currentNode);
 			//pathTo(path);
-		} else {
+		} else if(pq.isEmpty()){
 			Node home = new Node(1, 1, 0, null);
 			path.add(home);
 			pathTo(path);
-			goneHome = true;
+		//	goneHome = true;
 		}
 
 	}
 
 	public ArrayList<Node> path(Node start) {
 		path = new ArrayList<Node>();
-		Node goal = goalNode;
 		
+		Node goal = new Node(goalNode.xcord, goalNode.ycord, goalNode.weight, goalNode.parent);
 
 		while (!(goal.xcord == start.xcord && goal.ycord == start.ycord)) {
 			System.out.println(goal.xcord + "goal" + goal.ycord);
 			System.out.println(start.xcord + "start" + start.ycord);
-			path.add(goal);
+			path.add(new Node(goal.xcord, goal.ycord, goal.weight, goal.parent));
 			goal = goal.parent;
 		}
 		return path;
@@ -455,7 +455,7 @@ class MyAgentProgram implements AgentProgram {
 
 	@Override
 	public Action execute(Percept percept) {
-
+		state.updateWorld(1, 1, 4);
 		// DO NOT REMOVE this if condition!!!
 		if (initnialRandomActions > 0) {
 			return moveToRandomStartPosition((DynamicPercept) percept);
@@ -495,19 +495,20 @@ class MyAgentProgram implements AgentProgram {
 		if (bump) {
 			switch (state.agent_direction) {
 			case MyAgentState.NORTH:
-				//visited.add(currentNode);
+				visited.add(new Node(state.agent_x_position, state.agent_y_position-1, 0 ,currentNode.parent));
 				state.updateWorld(state.agent_x_position, state.agent_y_position - 1, state.WALL);
+				
 				break;
 			case MyAgentState.EAST:
-				//visited.add(currentNode);
+				visited.add(new Node(state.agent_x_position+1, state.agent_y_position, 0 ,currentNode.parent));
 				state.updateWorld(state.agent_x_position + 1, state.agent_y_position, state.WALL);
 				break;
 			case MyAgentState.SOUTH:
-				//visited.add(currentNode);
+				visited.add(new Node(state.agent_x_position, state.agent_y_position+1, 0 ,currentNode.parent));
 				state.updateWorld(state.agent_x_position, state.agent_y_position + 1, state.WALL);
 				break;
 			case MyAgentState.WEST:
-				//visited.add(currentNode);
+				visited.add(new Node(state.agent_x_position-1, state.agent_y_position, 0 ,currentNode.parent));
 				state.updateWorld(state.agent_x_position - 1, state.agent_y_position, state.WALL);
 				break;
 			}
@@ -545,10 +546,41 @@ class MyAgentProgram implements AgentProgram {
 //			}
 //		}
 		// System.out.println(northCounter + southCounter + eastCounter + westCounter);
-		currentNode.xcord = state.agent_x_position;
-		currentNode.ycord = state.agent_y_position;
-		visited.add(currentNode);
+		
+		//currentNode.xcord = state.agent_x_position;
+		//currentNode.ycord = state.agent_y_position;
+		if (currentNode.parent == null) { 
+		Node tempNode = new Node(currentNode.xcord, currentNode.ycord, currentNode.weight, null);
+		currentNode = new Node(state.agent_x_position, state.agent_y_position, 0 , tempNode);
+
+		} else {
+		Node tempNode = new Node(currentNode.xcord, currentNode.ycord, currentNode.weight, currentNode.parent);
+		currentNode = new Node(state.agent_x_position, state.agent_y_position, 0 , tempNode);
+
+		}
+
+		
 		addNeigh(currentNode);
+		if (pq.isEmpty()) {
+			goneHome = true;
+		} else {
+			goneHome = false;
+		}
+		
+		visited.add(new Node(state.agent_x_position, state.agent_y_position, 0 ,currentNode.parent));
+		//System.out.println("Visited:");
+		//for (int j = 0; j < visited.size()-1; j++) {
+		//	System.out.println("X: " + visited.get(j).xcord + " Y: " + visited.get(j).ycord);
+		//}
+		//System.out.println("Current node X: " + currentNode.xcord + "Current node Y:" + currentNode.ycord);
+		System.out.println("GoneHom " +goneHome);
+		System.out.println("Queue:");
+		
+		for (int i = 0; i < pq.size(); i++) {
+			System.out.println("X: " + pq.get(i).xcord + " Y: " + pq.get(i).ycord);
+		}
+
+		
 		if (goalNode == null) {
 			System.out.println("är null");
 			search();
@@ -630,7 +662,7 @@ class MyAgentProgram implements AgentProgram {
 //				// state.agent_x_position--;
 //				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 //			}
-		if (goneHome == true) {
+		if (goneHome == true && state.agent_x_position == 1 && state.agent_y_position==1) {
 			// return NoOpAction.NO_OP;
 			state.updateWorld(state.agent_x_position, state.agent_y_position, state.HOME);
 			state.agent_last_action = state.ACTION_NONE;
@@ -648,6 +680,7 @@ class MyAgentProgram implements AgentProgram {
 			return NoOpAction.NO_OP;
 		} else {
 			//DENNA ÄR BARA FÖR ATT HA NGNG RETURN FYLLER NOLL FUNKTION
+			search();
 			state.agent_last_action = state.ACTION_SUCK;
 			 return LIUVacuumEnvironment.ACTION_SUCK;
 		}
