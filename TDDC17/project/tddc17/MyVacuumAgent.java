@@ -180,15 +180,25 @@ class MyAgentProgram implements AgentProgram {
 	public void pathTo(ArrayList<Node> path) {
 		int xpath;
 		int ypath;
-		
+		northCounter = 0;
+		southCounter = 0;
+		westCounter = 0;
+		eastCounter = 0;
 		Point newPoint = new Point(0, 0);
 
-		newPoint.setLocation(path.get(path.size()-1).xcord, path.get(path.size()-1).ycord);
+		newPoint.setLocation(path.get(path.size() - 1).xcord, path.get(path.size() - 1).ycord);
+		path.remove(path.size() - 1);
 		System.out.println("ar i pathTo");
 
 		xpath = (int) (newPoint.getX() - state.agent_x_position);
 		ypath = (int) (newPoint.getY() - state.agent_y_position);
 		// System.out.println(coord.getX() + "mallan" + coord.getY());
+		System.out.println("GoalX: " + goalNode.xcord + "GoalY: " + goalNode.ycord);
+		System.out.println("Path:");
+		for (int i = 0; i < path.size(); i++) {
+			System.out.println("X:" + path.get(i).xcord + " Y: " + path.get(i).ycord);
+		}
+
 		if (ypath < 0) {
 			northCounter = Math.abs(ypath);
 			// moveNorth(xpath);
@@ -204,16 +214,14 @@ class MyAgentProgram implements AgentProgram {
 			// moveEast(ypath);
 			eastCounter = Math.abs(xpath);
 		}
-		totalCounter =  northCounter + southCounter + eastCounter + westCounter;
-		
-		
-		
+		totalCounter = northCounter + southCounter + eastCounter + westCounter;
+
 	}
 
 	public Action forward() {
-		visited.add(new Node(currentNode.xcord, currentNode.ycord, 0 ,currentNode.parent));
+		visited.add(new Node(currentNode.xcord, currentNode.ycord, 0, currentNode.parent));
 		addNeigh(currentNode);
-		//Systen.out.println("CurrentX: " + currentNode.xcord + " CurrentY: " + currentNode.ycord);
+		System.out.println("Innan " + "CurrentX: " + currentNode.xcord + " CurrentY: " + currentNode.ycord);
 		state.agent_last_action = state.ACTION_MOVE_FORWARD;
 		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 	}
@@ -250,10 +258,10 @@ class MyAgentProgram implements AgentProgram {
 				// state.agent_x_position++;
 				return forward();
 			}
-		} else {//else if (westCounter > 0) {
+		} else {// else if (westCounter > 0) {
 			if (state.agent_direction != state.WEST) {
 				// addNeigh(currentNode);
-				return  pivot(state.WEST);
+				return pivot(state.WEST);
 			} else {
 				westCounter--;
 				// addNeigh(currentNode);
@@ -381,25 +389,25 @@ class MyAgentProgram implements AgentProgram {
 		Node n = addNode(1, 0, parentNode);
 
 		if (checkNeigh(n)) {
-			//Systen.out.println("Lägger till");
+			// Systen.out.println("Lägger till");
 			pq.add(n);
 		}
 
 		n = addNode(-1, 0, parentNode);
 		if (checkNeigh(n)) {
-			//Systen.out.println("Lägger till");
+			// Systen.out.println("Lägger till");
 			pq.add(n);
 		}
 
 		n = addNode(0, 1, parentNode);
 		if (checkNeigh(n)) {
-			//Systen.out.println("Lägger till");
+			// Systen.out.println("Lägger till");
 			pq.add(n);
 		}
 
 		n = addNode(0, -1, parentNode);
 		if (checkNeigh(n)) {
-			//Systen.out.println("Lägger till");
+			// Systen.out.println("Lägger till");
 			pq.add(n);
 		}
 
@@ -412,69 +420,180 @@ class MyAgentProgram implements AgentProgram {
 
 	public void search() {
 		Point point;
-		//currentNode.xcord = state.agent_x_position;
-		//currentNode.ycord = state.agent_y_position;
-		//addNeigh(currentNode);
+		// currentNode.xcord = state.agent_x_position;
+		// currentNode.ycord = state.agent_y_position;
+		// addNeigh(currentNode);
 		// Collections.sort(pq);
-		
+
 		if (!pq.isEmpty()) {
 			Node newNode = new Node(pq.get(0).xcord, pq.get(0).ycord, pq.get(0).weight, pq.get(0).parent);
-			//Systen.out.println("X: " + state.agent_x_position + " Y: " + state.agent_y_position);
+			// Systen.out.println("X: " + state.agent_x_position + " Y: " +
+			// state.agent_y_position);
 			pq.remove(0);
-			visited.add(new Node(newNode.xcord, newNode.ycord, 0 ,newNode.parent));
+			visited.add(new Node(newNode.xcord, newNode.ycord, 0, newNode.parent));
 
 			// System.out.println(newNode.xcord + "s" + newNode.ycord + "nya noden");
 			// Varför lägger vi in noden vi letar efter i visited?
-			//visited.add(newNode);
+			// visited.add(newNode);
 			// currentNode = newNode;
 			point = new Point(newNode.xcord, newNode.ycord);
 
 			// System.out.println("Path" + path(currentNode, newNode).get(0).xcord +"x" +
 			// path(currentNode, newNode).get(0).ycord);
 			// System.out.println("Path:" + path(currentNode, newNode));
-			//Systen.out.println(newNode.xcord + " NewNode xcord");
+			// Systen.out.println(newNode.xcord + " NewNode xcord");
 			goalNode = new Node(newNode.xcord, newNode.ycord, newNode.weight, newNode.parent);
 			path = path(currentNode);
 			pathTo(path);
-		} else if(pq.isEmpty()){
+		} else if (pq.isEmpty()) {
 			Node home = new Node(1, 1, 0, null);
 			path.add(home);
 			pathTo(path);
-		//	goneHome = true;
+			// goneHome = true;
 		}
 
 	}
 
 	public ArrayList<Node> path(Node start) {
+		path.clear();
 		path = new ArrayList<Node>();
-		ArrayList <Node> startPath = new ArrayList<Node>();
+		boolean pathRoot = false;
+		boolean startRoot = false;
+		ArrayList<Node> startPath = new ArrayList<Node>();
+		startPath.clear();
 		Node startNode = new Node(start.xcord, start.ycord, start.weight, start.parent);
-		
+
 		Node goal = new Node(goalNode.xcord, goalNode.ycord, goalNode.weight, goalNode.parent);
 
-		while (!(goal.xcord == start.xcord && goal.ycord == start.ycord)) {
-			//Systen.out.println(goal.xcord + "goal" + goal.ycord);
-			//Systen.out.println(start.xcord + "start" + start.ycord);
+		System.out.println("Har borjar Path");
+		
+		while(!(goal.xcord == start.xcord && goal.ycord == start.ycord) && !(goal.xcord == startNode.xcord && goal.ycord == startNode.ycord) ) {
+			
+			if (pathRoot == false) {
 			path.add(new Node(goal.xcord, goal.ycord, goal.weight, goal.parent));
-			if (goal.parent == null) {
-
-				while(startNode.parent != null) {
-					startPath.add(startNode);
-					startNode = new Node (startNode.parent.xcord, startNode.parent.ycord, startNode.parent.weight, startNode.parent.parent);
-				}
-				for (int i = 0; i < startPath.size(); i ++) {
-					path.add(startPath.get(startPath.size()-i-1));
-				}
-				break;
-				
+			goal = new Node(goal.parent.xcord, goal.parent.ycord, goal.parent.weight, goal.parent.parent);
 			}
-			goal = new Node (goal.parent.xcord, goal.parent.ycord, goal.parent.weight, goal.parent.parent);
+			if (goal.parent == null) {
+				pathRoot = true;
+			}
+			if (startRoot == false) {
+			if (startNode.parent != null) {
+				
+			
+			startPath.add(new Node(startNode.xcord, startNode.ycord, startNode.weight, startNode.parent));
+			startNode = new Node(startNode.parent.xcord, startNode.parent.ycord, startNode.parent.weight,
+					startNode.parent.parent);
+			}
+			}
+			if (startNode.parent != null) {
+			if (startNode.parent.parent == null) {
+				startRoot = true;
+			}
+			}else {
+				startRoot = true;
+			}
+			if (pathRoot == true && startRoot == true) {
+				break;
+			}
+			
+			
 		}
+		System.out.println("DelPath:");
+		for (int i = 0; i < path.size(); i++) {
+			System.out.println("X:" + path.get(i).xcord + " Y: " + path.get(i).ycord);
+		}
+		System.out.println("Startpath");
+		// System.out.println("GoalX: " + goalNode.xcord + "GoalY: " + goalNode.ycord);
+		// System.out.println("Path:");
+		for (int i = 0; i < startPath.size(); i++) {
+			System.out.println("X:" + startPath.get(i).xcord + " Y: " + startPath.get(i).ycord);
+		}
+		while (!startPath.isEmpty()) {
+			path.add(new Node(startPath.get(startPath.size() - 1).xcord, startPath.get(startPath.size() - 1).ycord,
+					startPath.get(startPath.size() - 1).weight, startPath.get(startPath.size() - 1).parent));
+			startPath.remove(startPath.size() - 1);
+		}
+
+		
+		
 		System.out.println("GoalX: " + goalNode.xcord + "GoalY: " + goalNode.ycord);
-		System.out.println("Path:");
-		for (int i = 0; i<path.size(); i++) {
-			System.out.println("X:" + path.get(i).xcord +" Y: " + path.get(i).ycord);
+		System.out.println("Hela Path:");
+		for (int i = 0; i < path.size(); i++) {
+			System.out.println("X:" + path.get(i).xcord + " Y: " + path.get(i).ycord);
 		}
+
+
+		
+		
+		
+		
+//		while (!(goal.xcord == start.xcord && goal.ycord == start.ycord)) {
+//			// Systen.out.println(goal.xcord + "goal" + goal.ycord);
+//			// Systen.out.println(start.xcord + "start" + start.ycord);
+//			path.add(new Node(goal.xcord, goal.ycord, goal.weight, goal.parent));
+//			if (goal.parent == null) {
+//				break;
+//
+//			}
+//
+//			goal = new Node(goal.parent.xcord, goal.parent.ycord, goal.parent.weight, goal.parent.parent);
+//		}
+//		System.out.println("DelPath:");
+//		for (int i = 0; i < path.size(); i++) {
+//			System.out.println("X:" + path.get(i).xcord + " Y: " + path.get(i).ycord);
+//		}
+//		if (goal.parent == null && start.parent != null) {
+//			while (startNode.parent.parent != null) {
+//				if (startNode.xcord == goal.xcord && startNode.ycord == goal.ycord) {
+//					break;
+//				}
+//				startPath.add(new Node(startNode.xcord, startNode.ycord, startNode.weight, startNode.parent));
+//				startNode = new Node(startNode.parent.xcord, startNode.parent.ycord, startNode.parent.weight,
+//						startNode.parent.parent);
+//			}
+//			System.out.println("Startpath");
+//			// System.out.println("GoalX: " + goalNode.xcord + "GoalY: " + goalNode.ycord);
+//			// System.out.println("Path:");
+//			for (int i = 0; i < startPath.size(); i++) {
+//				System.out.println("X:" + startPath.get(i).xcord + " Y: " + startPath.get(i).ycord);
+//			}
+//
+//			while (!startPath.isEmpty()) {
+//				path.add(new Node(startPath.get(startPath.size() - 1).xcord, startPath.get(startPath.size() - 1).ycord,
+//						startPath.get(startPath.size() - 1).weight, startPath.get(startPath.size() - 1).parent));
+//				startPath.remove(startPath.size() - 1);
+//			}
+//
+//		}
+//		// System.out.println("GoalX: " + goalNode.xcord + "GoalY: " + goalNode.ycord);
+//		// System.out.println("Path:");
+//		// for (int i = 0; i<path.size(); i++) {
+//		// System.out.println("X:" + path.get(i).xcord +" Y: " + path.get(i).ycord);
+//		// }
+//		System.out.println("GoalX: " + goalNode.xcord + "GoalY: " + goalNode.ycord);
+//		System.out.println("Hela Path:");
+//		for (int i = 0; i < path.size(); i++) {
+//			System.out.println("X:" + path.get(i).xcord + " Y: " + path.get(i).ycord);
+//		}
+//		
+//		for (int i = 0; i <path.size(); i++) {
+//			for (int j = 0; j < path.size(); j++) {
+//			if (path.get(i).xcord == path.get(j).xcord && path.get(i).ycord == path.get(j).ycord) {
+//				for (int k = i +1; k <= j; k++) {
+//					if (path.size() -1 < k ) {
+//						break;
+//					}
+//					path.remove(k);
+//				}
+//			}
+//			}
+//		}
+//		System.out.println("Path efter rens");
+//		for (int i = 0; i < path.size(); i++) {
+//			System.out.println("X:" + path.get(i).xcord + " Y: " + path.get(i).ycord);
+//		}
+		
+
 		return path;
 	}
 
@@ -521,20 +640,24 @@ class MyAgentProgram implements AgentProgram {
 		if (bump) {
 			switch (state.agent_direction) {
 			case MyAgentState.NORTH:
-				//visited.add(new Node(state.agent_x_position, state.agent_y_position-1, 0 ,currentNode.parent));
+				// visited.add(new Node(state.agent_x_position, state.agent_y_position-1, 0
+				// ,currentNode.parent));
 				state.updateWorld(state.agent_x_position, state.agent_y_position - 1, state.WALL);
-				
+
 				break;
 			case MyAgentState.EAST:
-				//visited.add(new Node(state.agent_x_position+1, state.agent_y_position, 0 ,currentNode.parent));
+				// visited.add(new Node(state.agent_x_position+1, state.agent_y_position, 0
+				// ,currentNode.parent));
 				state.updateWorld(state.agent_x_position + 1, state.agent_y_position, state.WALL);
 				break;
 			case MyAgentState.SOUTH:
-				//visited.add(new Node(state.agent_x_position, state.agent_y_position+1, 0 ,currentNode.parent));
+				// visited.add(new Node(state.agent_x_position, state.agent_y_position+1, 0
+				// ,currentNode.parent));
 				state.updateWorld(state.agent_x_position, state.agent_y_position + 1, state.WALL);
 				break;
 			case MyAgentState.WEST:
-				//visited.add(new Node(state.agent_x_position-1, state.agent_y_position, 0 ,currentNode.parent));
+				// visited.add(new Node(state.agent_x_position-1, state.agent_y_position, 0
+				// ,currentNode.parent));
 				state.updateWorld(state.agent_x_position - 1, state.agent_y_position, state.WALL);
 				break;
 			}
@@ -552,6 +675,9 @@ class MyAgentProgram implements AgentProgram {
 			state.agent_last_action = state.ACTION_SUCK;
 
 			return LIUVacuumEnvironment.ACTION_SUCK;
+		}
+		if (!bump && state.agent_last_action == state.ACTION_MOVE_FORWARD) {
+			//addNeigh(currentNode)
 		}
 
 		// System.out.println(pq.peek().xcord + "Peek");
@@ -572,21 +698,15 @@ class MyAgentProgram implements AgentProgram {
 //			}
 //		}
 		// System.out.println(northCounter + southCounter + eastCounter + westCounter);
-		
-		//currentNode.xcord = state.agent_x_position;
-		//currentNode.ycord = state.agent_y_position;
-		
-		
-		
-		
-		
 
-	
-			// System.out.println("Bump");
-			// System.out.println(currentNode.xcord + "BumpCurrent" + currentNode.ycord);
-			// visited.add(currentNode);
-			// search();
-		
+		// currentNode.xcord = state.agent_x_position;
+		// currentNode.ycord = state.agent_y_position;
+
+		// System.out.println("Bump");
+		// System.out.println(currentNode.xcord + "BumpCurrent" + currentNode.ycord);
+		// visited.add(currentNode);
+		// search();
+
 		// System.out.println("Syd" + southCounter + "Nord" + northCounter + "Väst" +
 		// westCounter + "East" + eastCounter);
 //		if (northCounter > 0) {
@@ -633,7 +753,7 @@ class MyAgentProgram implements AgentProgram {
 //				// state.agent_x_position--;
 //				return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 //			}
-		if (goneHome == true && state.agent_x_position == 1 && state.agent_y_position==1) {
+		if (goneHome == true && state.agent_x_position == 1 && state.agent_y_position == 1) {
 			// return NoOpAction.NO_OP;
 			state.updateWorld(state.agent_x_position, state.agent_y_position, state.HOME);
 			state.agent_last_action = state.ACTION_NONE;
@@ -642,61 +762,64 @@ class MyAgentProgram implements AgentProgram {
 				System.out.println("X: " + visited.get(j).xcord + " Y: " + visited.get(j).ycord);
 			}
 			System.out.println("Queue:");
-			//System.out.println("Current node X: " + currentNode.xcord + "Current node Y:" + currentNode.ycord);
+			// System.out.println("Current node X: " + currentNode.xcord + "Current node Y:"
+			// + currentNode.ycord);
 			for (int j = 0; j < pq.size(); j++) {
 				System.out.println("X: " + pq.get(j).xcord + " Y: " + pq.get(j).ycord);
 			}
 			int counter = northCounter + southCounter + eastCounter + westCounter;
-			//System.out.println(counter);
+			// System.out.println(counter);
 			return NoOpAction.NO_OP;
 		} else {
 			if (state.agent_last_action == state.ACTION_MOVE_FORWARD) {
-				if (currentNode.parent == null) { 
-				Node tempNode = new Node(currentNode.xcord, currentNode.ycord, currentNode.weight, null);
-				currentNode = new Node(state.agent_x_position, state.agent_y_position, 0 , tempNode);
+				if (currentNode.parent == null) {
+					Node tempNode = new Node(currentNode.xcord, currentNode.ycord, currentNode.weight, null);
+					currentNode = new Node(state.agent_x_position, state.agent_y_position, 0, tempNode);
 
 				} else {
-				Node tempNode = new Node(currentNode.xcord, currentNode.ycord, currentNode.weight, currentNode.parent);
-				currentNode = new Node(state.agent_x_position, state.agent_y_position, 0 , tempNode);
+					Node tempNode = new Node(currentNode.xcord, currentNode.ycord, currentNode.weight,
+							currentNode.parent);
+					currentNode = new Node(state.agent_x_position, state.agent_y_position, 0, tempNode);
 
 				}
-				
-				}
 
-				
-				//addNeigh(currentNode);
-				if (pq.isEmpty()) {
-					goneHome = true;
-				} else {
-					goneHome = false;
-				}
-				
-				//visited.add(new Node(state.agent_x_position, state.agent_y_position, 0 ,currentNode.parent));
-				System.out.println("Visited:");
-				for (int j = 0; j < visited.size()-1; j++) {
-					System.out.println("X: " + visited.get(j).xcord + " Y: " + visited.get(j).ycord);
-				}
-				//System.out.println("Current node X: " + currentNode.xcord + "Current node Y:" + currentNode.ycord);
-				//System.out.println("GoneHom " +goneHome);
-				System.out.println("Queue:");
-				
-				for (int i = 0; i < pq.size(); i++) {
-					System.out.println("X: " + pq.get(i).xcord + " Y: " + pq.get(i).ycord);
-				}
+			}
 
-				
-				if (goalNode == null) {
-					//System.out.println("är null");
-					search();
-				} else if (goalNode.xcord == currentNode.xcord && goalNode.ycord == currentNode.ycord) {
-					// System.out.println("HÖR");
-					//visited.add(currentNode);
-					search();
-					//System.out.println("Är vid mål");
-					//System.out.println(goalNode.xcord + " GoalNode " + goalNode.ycord);
-				} else if (bump) {
-					search();
-				}
+			// addNeigh(currentNode);
+			if (pq.isEmpty()) {
+				goneHome = true;
+			} else {
+				goneHome = false;
+			}
+
+			// visited.add(new Node(state.agent_x_position, state.agent_y_position, 0
+			// ,currentNode.parent));
+			// System.out.println("Visited:");
+			// for (int j = 0; j < visited.size()-1; j++) {
+			// System.out.println("X: " + visited.get(j).xcord + " Y: " +
+			// visited.get(j).ycord);
+			// }
+			// System.out.println("Current node X: " + currentNode.xcord + "Current node Y:"
+			// + currentNode.ycord);
+			// System.out.println("GoneHom " +goneHome);
+			System.out.println("Queue:");
+
+			for (int i = 0; i < pq.size(); i++) {
+				System.out.println("X: " + pq.get(i).xcord + " Y: " + pq.get(i).ycord);
+			}
+
+			if (goalNode == null) {
+				// System.out.println("är null");
+				search();
+			} else if (goalNode.xcord == currentNode.xcord && goalNode.ycord == currentNode.ycord) {
+				// System.out.println("HÖR");
+				// visited.add(currentNode);
+				search();
+				// System.out.println("Är vid mål");
+				// System.out.println(goalNode.xcord + " GoalNode " + goalNode.ycord);
+			} else if (bump) {
+				search();
+			}
 //				}else {
 //					totalCounter = westCounter + eastCounter + northCounter + southCounter;
 //
@@ -712,21 +835,24 @@ class MyAgentProgram implements AgentProgram {
 //					return walk();
 //					}
 //				}
-				totalCounter = westCounter + eastCounter + northCounter + southCounter;
+			totalCounter = westCounter + eastCounter + northCounter + southCounter;
 
-				if (totalCounter > 0 ) {
-					//System.out.println("total " + totalCounter);
-					//System.out.println("Current " + currentNode.xcord + " " + currentNode.ycord);
-					//System.out.println("State agent  " + state.agent_x_position + " " + state.agent_y_position);
-					//addNeigh(currentNode);
-					return walk();
-				}else {
-				//System.out.println("pathToPath");
+			if (totalCounter > 0) {
+				// System.out.println("total " + totalCounter);
+				// System.out.println("Current " + currentNode.xcord + " " + currentNode.ycord);
+				// System.out.println("State agent " + state.agent_x_position + " " +
+				// state.agent_y_position);
+				// addNeigh(currentNode);
+				return walk();
+			} else if (!path.isEmpty()) {
+				// System.out.println("pathToPath");
 				pathTo(path);
 				return walk();
-		}
+			} else {
+				search();
+				return walk();
+			}
 
-	
 		}
 	}
 }
