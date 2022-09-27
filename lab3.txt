@@ -1,0 +1,9 @@
+Part II
+5 a) 2,6% if no obs. 3,4% if icy.
+b) if both warnings indaicate failure 14,5 %. 
+P(meltdown|WaterLeakWarning,PumpfailureWarning) = 0,145
+If both fail 20%
+p(meltdown|WaterLeak,PumpFailure)=0,2
+c) Difficult to have repeated observations of a meltdown.?? Dubbelkolla!
+d) Either discrete temperatures or contiunous temperatures how it affects the probability distribution?
+With a discret domain the probability distribution for P(WaterLeak|temperature) 
