@@ -7,3 +7,83 @@ p(meltdown|WaterLeak,PumpFailure)=0,2
 c) Difficult to have repeated observations of a meltdown.?? Dubbelkolla!
 d) Either discrete temperatures or contiunous temperatures how it affects the probability distribution?
 With a discret domain the probability distribution for P(WaterLeak|temperature) 
+
+6. 
+a) It represents the probabilty of an outcome for all different combinations of values for variables.
+
+b) Joint probability distribution is the propability of a state depending on the states of other variables. 
+An example could be: what is the probabilty that X=True if Y=False and Z=True i.e. P(X=T|Y=F,Z=T)
+
+X6, meltdown=False
+X5, PumpfailureWarning=False
+X4, PumpFailure=False
+X3, WaterLeakWarning=False
+X2, WaterLeak=False
+X1, IcyWeather = False
+
+
+P(X6,X5,X4,X3,X2,X1) = P(X6|X5,X4,X3,X2,X1)*P(X5|X4,X3,X2,X1)*P(X4|X3,X2,X1)*P(X3|X2,X1)*P(X2|X1)*P(X1)
+
+where (according to the Java Applet),
+
+P(X6|X5,X4,X3,X2,X1) = 0.99900
+P(X5|X4,X3,X2,X1) = 0.95000
+P(X4|X3,X2,X1) = 0.90000
+P(X3|X2,X1) = 0.95000
+P(X2|X1) = 0.90000
+P(X1) = 0.95000
+
+P(X6,X5,X4,X3,X2,X1) is therefore equal to:
+
+P(X6,X5,X4,X3,X2,X1) = 0.999*0.95*0.9*0.95*0.9*0.95=0.69378
+
+This i a common state because the probabilty that it occurs is larger than 50%
+
+c) According to the Java Applet the probability is 20% for at meltdown. The warnings have no effect on the probability of a meltdown since it only indicates probability of a waterleak pump failure. Since does variables are known it has no effect. The icy weather variable changes the probability of a water leak, but since we already knows there is a waterleak it won't have any effect on the probability of a meltdown.
+
+d)
+P(X6T|X5,X4F,X3,X2,X1) = 0.00100
+P(X6F|X5,X4F,X3,X2,X1) = 0.99900
+P(X5|X4F,X3,X2,X1) = 0.95000
+P(X4F|X3,X2,X1) = 0.90000
+P(X3|X2,X1) = 0.95000
+P(X2|X1) = 0.90000
+P(X1) = 0.95000
+
+P(X6T|X5,X4T,X3,X2,X1) = 0.15000
+P(X6F|X5,X4T,X3,X2,X1) = 0.85000
+P(X5|X4T,X3,X2,X1) = 0.10000
+P(X4T|X3,X2,X1) = 0.10000
+P(X3|X2,X1) = 0.95000
+P(X2|X1) = 0.90000
+P(X1) = 0.95000
+
+X6, meltdown=False
+X5, PumpfailureWarning=False
+X4F, PumpFailure=False
+X4T, PumpFailure =True
+X3, WaterLeakWarning=False
+X2, WaterLeak=False
+X1, IcyWeather = False
+
+P(X6,X5,X4FT,X3,X2,X1) = P(X6|X5,X4F,X3,X2,X1)*P(X5|X4F,X3,X2,X1)*P(X4F|X3,X2,X1)*P(X3|X2,X1)*P(X2|X1)*P(X1) + P(X6|X5,X4T,X3,X2,X1)*P(X5|X4T,X3,X2,X1)*P(X4T|X3,X2,X1)*P(X3|X2,X1)*P(X2|X1)*P(X1) 
+= 0.69378 + 0.00122 = 0.695 
+
+Normalized 0,99725
+
+P(X6T,X5,X4FT,X3,X2,X1) = P(X6T|X5,X4F,X3,X2,X1)*P(X5|X4F,X3,X2,X1)*P(X4F|X3,X2,X1)*P(X3|X2,X1)*P(X2|X1)*P(X1) + P(X6T|X5,X4T,X3,X2,X1)*P(X5|X4T,X3,X2,X1)*P(X4T|X3,X2,X1)*P(X3|X2,X1)*P(X2|X1)*P(X1)
+= 0.00069 + 0.00122 = 0.00191
+
+Normalized 0,00275
+
+
+Part III
+
+
+
+
+
+
+
+
+
