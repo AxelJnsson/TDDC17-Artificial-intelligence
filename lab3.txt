@@ -79,11 +79,18 @@ Normalized 0,00275
 
 Part III
 
+2.1
+After observing that the radio is dead: X1 = 0,98116
+Before --||--: X2 = 0,99001
+
+Changes in odds of surviving due to trying the radio
+0,99001-0,98116 = 0,00885 
 
 
-
-
-
+2.2
+Before bringin the bike: Y1 = 0,99001
+After bringing the bike: Y2 = 0,99505
+Changes in odds: 0,99505-0,99001 = 0,00504
 
 
 
