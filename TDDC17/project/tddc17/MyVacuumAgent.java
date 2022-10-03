@@ -293,14 +293,11 @@ class MyAgentProgram implements AgentProgram {
 		
 		
 		if (visited.isEmpty() && pq.isEmpty() ) {
-			//System.out.println("inne i forsta");
-			// System.out.println("Bpda är tomma");
 			return true;
 		}
 
 		if (!visited.isEmpty()) {
 			for (int i = 0; i < visited.size(); i++) {
-				// System.out.println("Visited ar inte tom");
 				if ((visited.get(i).xcord == n.xcord && visited.get(i).ycord == n.ycord)) {
 					return false;
 
@@ -309,18 +306,15 @@ class MyAgentProgram implements AgentProgram {
 		}
 
 		if (!pq.isEmpty()) {
-			// System.out.println("Visited ar inte tom och pq ar inte tom");
 			for (int j = 0; j < pq.size(); j++) {
 
 				if ((pq.get(j).xcord == n.xcord && pq.get(j).ycord == n.ycord)) {
-					// System.out.println("Letar efter lika");
 					return false;
 				}
 
 			}
 		}
 
-		// System.out.println("Lägger till ");
 
 		return true;
 	}
@@ -369,10 +363,8 @@ class MyAgentProgram implements AgentProgram {
 		return new_node;
 	}
 
-	// Our search function. It uses the ArrayLists as a stack to pop the top Node to
-	// implement a BFS search overall. This functions then calls on path() function
-	// Which builds a path,
-
+	// Search function uses a Breadth-first search to find the one of the closest unvisited nodes.
+	
 	public void BFS() {
 		boolean found = false;
 		goalNode = null;
@@ -407,13 +399,7 @@ class MyAgentProgram implements AgentProgram {
 	}
 
 
-	// Path function builds a path between the current place and the goal. This
-	// function uses the parent nodes to traverse the tree implemented by the map
-	// ArrayList.
-	// It builds the path by adding a Node iteratively from both the start Node and
-	// the Goal node until they meet. Then it merges these two paths into a coherent
-	// path.
-
+// Finds the path from our goal found in BFS to our current position by using the parent.nodes to traverse upwards in the tree. 
 	public ArrayList<Node> getPath(Node goal) {
 		ArrayList<Node> pathToGoal = new ArrayList<Node>();
 		pathToGoal.add(new Node(goal.xcord, goal.ycord, goal.weight, goal.parent));
@@ -430,7 +416,7 @@ class MyAgentProgram implements AgentProgram {
 
 
 
-	// PathTo enables the counters to show the directions to the next Node in
+	// pathTo enables how we will walk to the next node in our path
 	public void pathTo(ArrayList<Node> path) {
 		int xpath;
 		int ypath;
@@ -544,8 +530,8 @@ class MyAgentProgram implements AgentProgram {
 			return LIUVacuumEnvironment.ACTION_SUCK;
 		}
 		
-		
-		
+		// Main logic loop below
+		//Checks for the first search
 		if (goalNode == null && goneHome==false) {
 			BFS();
 			
@@ -557,21 +543,7 @@ class MyAgentProgram implements AgentProgram {
 		
 			return NoOpAction.NO_OP;
 		}
-//		else if (goneHome == true && state.agent_x_position == 1 && state.agent_y_position == 1) {
-//		
-//			state.updateWorld(state.agent_x_position, state.agent_y_position, state.HOME);
-//			state.agent_last_action = state.ACTION_NONE;
-//			System.out.println("Visited:");
-//			for (int j = 0; j < visited.size(); j++) {
-//				System.out.println("X: " + visited.get(j).xcord + " Y: " + visited.get(j).ycord);
-//			}
-//			System.out.println("Queue:");
-//
-//			for (int j = 0; j < pq.size(); j++) {
-//				System.out.println("X: " + pq.get(j).xcord + " Y: " + pq.get(j).ycord);
-//			}
-//			return NoOpAction.NO_OP;
-	//} 
+		// Checks for walls
 	else if (bump && state.world[goalNode.xcord][goalNode.ycord] == 1) {
 
 			visited.add(new Node(goalNode.xcord, goalNode.ycord, goalNode.weight, goalNode.parent));
@@ -581,7 +553,7 @@ class MyAgentProgram implements AgentProgram {
 			}
 
 			return walk();
-
+			//Checks for found goal
 		} else if ((goalNode.xcord == currentNode.xcord && goalNode.ycord == currentNode.ycord)){
 			BFS();
 			if (goneHome == false) {
@@ -589,10 +561,12 @@ class MyAgentProgram implements AgentProgram {
 			}
 
 			return walk();
+			//Finds the next node in the path
 		} else if (state.agent_last_action == state.ACTION_MOVE_FORWARD) {
 			pathTo(path);
 
 			return walk();
+			// Walks. 
 		}else {
 			return walk();
 		}
