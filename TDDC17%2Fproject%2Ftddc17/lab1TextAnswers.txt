@@ -1,0 +1,55 @@
+Task 1:
+
+The main decision loop in this task have 5 different scenarios:
+1. Have we reached home and should finish.
+2. Are all nodes visited and we should return home next.
+3. Have we reached our goal and needs to do a new search.
+4. Have we reached a wall and needs to do a new search.
+5. Otherwise we keep going towards our goal.
+
+Our main tool in this were the search.
+After trying to implement a more naive solution where we only checked for the closest unvisited node and went there directly,
+we insted implemented a breadth-first search starting from where the agent starts and saving the previous node as a parent.
+Thus allowing us to traverse the map even though the size of the map is dynamic.
+
+This proved to be quite inefficient as we visit some nodes a lot of times. However, it did allow us to return home once all nodes were 
+visited. 
+
+To be able to keep to complete the task our agent needed to know a few things. 
+- By default it were able to percept its environment. 
+- We also needed it to keep track of its location.
+- Its visited nodes.
+- All possible earlier traversable nodes.
+- Remaining places to visit. 
+
+These were used to 
+1. Search for unvisited nodes.
+2. Create a path using nodes visited before, thus being traversable.
+3. Check for when we are done.
+
+
+---
+
+Task 2. 
+The main decision loop in this task have 4 different scenarios:
+1. Should we do the first search.
+2. Have we found our goal and should do a new search.
+3. Have we reached a wall and needs to do a new search.
+4. Are there no more nodes to visit, then we quit.
+5. Continue walking towards the goal.
+
+For this task we had to augment our search and traversal strategy for two reasons. Our agent is slow and it could not handle random obstacles
+in Task 1. To adress this we switched from always using the same BFS tree, to making a new breadth-first search everytime to find the closest 
+unvisited node from our current state rather than our starting state. 
+
+This made the traversal simpler and thus enabled us to handle obstacles. In addition we also managed to make a much more efficient solution.
+
+The same data were saved both in task 1 and task 2. The main difference is that the unvisited nodes were not saved between states in task 2 only the visited nodes.
+
+---
+
+We choose the breadth-frist-search and parent-node traversal strategy for three main reasons.
+1. Our naive search-and-traverse was not easily implemented on a dynamic map for our agent.
+2. When comparing with the existing random and reactive agent, we needed a smarter agent that would know its earlier states and thus make
+an informed decison where to go next.
+3. We wanted a solution that would definitley visit all nodes compared to the exisiting solutions that relied on sheer luck.
