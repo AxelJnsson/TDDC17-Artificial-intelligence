@@ -160,14 +160,14 @@ class MyAgentProgram implements AgentProgram {
 		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 	}
 
-	
+	// Function to move forward
 	public Action forward() {
 		visited.add(new Node(currentNode.xcord, currentNode.ycord, 0, currentNode.parent));
-		//addNeigh(currentNode);
 		state.agent_last_action = state.ACTION_MOVE_FORWARD;
 		return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
 	}
-
+// Function to decide if we are to pivot or move forward
+	
 	public Action walk() {
 
 		if (northCounter > 0) {
@@ -202,12 +202,7 @@ class MyAgentProgram implements AgentProgram {
 	}
 	}
 
-	// public moveNorth(int steps)
-
-	// state.agent_last_action = state.ACTION_MOVE_FORWARD;
-	// return LIUVacuumEnvironment.ACTION_MOVE_FORWARD;
-
-	// }
+	// Function to pivot
 
 	public Action pivot(int desired_dir) {
 
@@ -283,6 +278,8 @@ class MyAgentProgram implements AgentProgram {
 //		}
 
 	}
+	
+	//Function to check if we already have the nodes in our queue.
 	public boolean checkNew (Node n) {
 		
 		if (!map.isEmpty()) {
@@ -294,15 +291,14 @@ class MyAgentProgram implements AgentProgram {
 		}
 		return true;
 	}
+	//Function to check if visited.
 	public boolean checkNeigh(Node n) {
 		if (visited.isEmpty() && pq.isEmpty()) {
-			// System.out.println("Bpda är tomma");
 			return true;
 		}
 
 		if (!visited.isEmpty()) {
 			for (int i = 0; i < visited.size(); i++) {
-				// System.out.println("Visited ar inte tom");
 				if ((visited.get(i).xcord == n.xcord && visited.get(i).ycord == n.ycord)) {
 					return false;
 
@@ -311,21 +307,18 @@ class MyAgentProgram implements AgentProgram {
 		}
 
 		if (!pq.isEmpty()) {
-			// System.out.println("Visited ar inte tom och pq ar inte tom");
 			for (int j = 0; j < pq.size(); j++) {
 
 				if ((pq.get(j).xcord == n.xcord && pq.get(j).ycord == n.ycord)) {
-					// System.out.println("Letar efter lika");
 					return false;
 				}
 
 			}
 		}
 
-		// System.out.println("Lägger till ");
 		return true;
 	}
-
+// Function to add neighbours into queue and path
 	public void addNeigh(Node parentNode) {
 		Node n = addNode(1, 0, parentNode);
 
@@ -365,12 +358,12 @@ class MyAgentProgram implements AgentProgram {
 		
 
 	}
-
+// Fucntion to addnodes
 	public Node addNode(int xNeigh, int yNeigh, Node parentNode) {
 		Node new_node = new Node(currentNode.xcord + xNeigh, currentNode.ycord + yNeigh, 0, parentNode);
 		return new_node;
 	}
-
+// Our Search function which searches for the closest unvisited node from where we started in the search-tree pq
 	public void search() {
 		Point point;
 	
@@ -390,7 +383,7 @@ class MyAgentProgram implements AgentProgram {
 		}
 
 	}
-
+// This function builds our path. Iteratively from Goal and Start until they meet
 	public ArrayList<Node> path(Node start) {
 		path.clear();
 		path = new ArrayList<Node>();
@@ -402,7 +395,6 @@ class MyAgentProgram implements AgentProgram {
 
 		Node goal = new Node(goalNode.xcord, goalNode.ycord, goalNode.weight, goalNode.parent);
 
-		//System.out.println("Har borjar Path");
 		
 		while(!(goal.xcord == start.xcord && goal.ycord == start.ycord)){
 			if ((goal.xcord == startNode.xcord && goal.ycord == startNode.ycord)) {
@@ -447,16 +439,7 @@ class MyAgentProgram implements AgentProgram {
 			
 			
 		}
-//		System.out.println("DelPath:");
-//		for (int i = 0; i < path.size(); i++) {
-//			System.out.println("X:" + path.get(i).xcord + " Y: " + path.get(i).ycord);
-//		}
-//		System.out.println("Startpath");
-//		// System.out.println("GoalX: " + goalNode.xcord + "GoalY: " + goalNode.ycord);
-//		// System.out.println("Path:");
-//		for (int i = 0; i < startPath.size(); i++) {
-//			System.out.println("X:" + startPath.get(i).xcord + " Y: " + startPath.get(i).ycord);
-//		}
+//		
 		if (!(goal.xcord == start.xcord && goal.ycord==start.ycord)) {
 		while (!startPath.isEmpty()) {
 			path.add(new Node(startPath.get(startPath.size() - 1).xcord, startPath.get(startPath.size() - 1).ycord,
@@ -467,83 +450,9 @@ class MyAgentProgram implements AgentProgram {
 
 		
 		
-//		System.out.println("GoalX: " + goalNode.xcord + "GoalY: " + goalNode.ycord);
-//		System.out.println("Hela Path:");
-//		for (int i = 0; i < path.size(); i++) {
-//			System.out.println("X:" + path.get(i).xcord + " Y: " + path.get(i).ycord);
-//		}
-
-
 		
 		
-		
-		
-//		while (!(goal.xcord == start.xcord && goal.ycord == start.ycord)) {
-//			// Systen.out.println(goal.xcord + "goal" + goal.ycord);
-//			// Systen.out.println(start.xcord + "start" + start.ycord);
-//			path.add(new Node(goal.xcord, goal.ycord, goal.weight, goal.parent));
-//			if (goal.parent == null) {
-//				break;
-//
-//			}
-//
-//			goal = new Node(goal.parent.xcord, goal.parent.ycord, goal.parent.weight, goal.parent.parent);
-//		}
-//		System.out.println("DelPath:");
-//		for (int i = 0; i < path.size(); i++) {
-//			System.out.println("X:" + path.get(i).xcord + " Y: " + path.get(i).ycord);
-//		}
-//		if (goal.parent == null && start.parent != null) {
-//			while (startNode.parent.parent != null) {
-//				if (startNode.xcord == goal.xcord && startNode.ycord == goal.ycord) {
-//					break;
-//				}
-//				startPath.add(new Node(startNode.xcord, startNode.ycord, startNode.weight, startNode.parent));
-//				startNode = new Node(startNode.parent.xcord, startNode.parent.ycord, startNode.parent.weight,
-//						startNode.parent.parent);
-//			}
-//			System.out.println("Startpath");
-//			// System.out.println("GoalX: " + goalNode.xcord + "GoalY: " + goalNode.ycord);
-//			// System.out.println("Path:");
-//			for (int i = 0; i < startPath.size(); i++) {
-//				System.out.println("X:" + startPath.get(i).xcord + " Y: " + startPath.get(i).ycord);
-//			}
-//
-//			while (!startPath.isEmpty()) {
-//				path.add(new Node(startPath.get(startPath.size() - 1).xcord, startPath.get(startPath.size() - 1).ycord,
-//						startPath.get(startPath.size() - 1).weight, startPath.get(startPath.size() - 1).parent));
-//				startPath.remove(startPath.size() - 1);
-//			}
-//
-//		}
-//		// System.out.println("GoalX: " + goalNode.xcord + "GoalY: " + goalNode.ycord);
-//		// System.out.println("Path:");
-//		// for (int i = 0; i<path.size(); i++) {
-//		// System.out.println("X:" + path.get(i).xcord +" Y: " + path.get(i).ycord);
-//		// }
-//		System.out.println("GoalX: " + goalNode.xcord + "GoalY: " + goalNode.ycord);
-//		System.out.println("Hela Path:");
-//		for (int i = 0; i < path.size(); i++) {
-//			System.out.println("X:" + path.get(i).xcord + " Y: " + path.get(i).ycord);
-//		}
-//		
-//		for (int i = 0; i <path.size(); i++) {
-//			for (int j = 0; j < path.size(); j++) {
-//			if (path.get(i).xcord == path.get(j).xcord && path.get(i).ycord == path.get(j).ycord) {
-//				for (int k = i +1; k <= j; k++) {
-//					if (path.size() -1 < k ) {
-//						break;
-//					}
-//					path.remove(k);
-//				}
-//			}
-//			}
-//		}
-//		System.out.println("Path efter rens");
-//		for (int i = 0; i < path.size(); i++) {
-//			System.out.println("X:" + path.get(i).xcord + " Y: " + path.get(i).ycord);
-//		}
-		
+	
 
 		return path;
 	}
@@ -675,50 +584,33 @@ class MyAgentProgram implements AgentProgram {
 		if (!bump && state.agent_last_action == state.ACTION_MOVE_FORWARD) {
 			
 		}
+		
+		// This is the main logic loop
+		
+		
+		// Checks if we are home
 		if (goneHome == true && state.agent_x_position == 1 && state.agent_y_position == 1) {
 			state.updateWorld(state.agent_x_position, state.agent_y_position, state.HOME);
 			state.agent_last_action = state.ACTION_NONE;
-			System.out.println("Visited:");
-			for (int j = 0; j < visited.size(); j++) {
-				System.out.println("X: " + visited.get(j).xcord + " Y: " + visited.get(j).ycord);
-			}
-			System.out.println("Queue:");
-		
-			for (int j = 0; j < pq.size(); j++) {
-				System.out.println("X: " + pq.get(j).xcord + " Y: " + pq.get(j).ycord);
-			}
-			return NoOpAction.NO_OP;
-		} //else {
-			//if (state.agent_last_action == state.ACTION_MOVE_FORWARD) {
-				//if (currentNode.parent == null) {
-					//Node tempNode = new Node(currentNode.xcord, currentNode.ycord, currentNode.weight, null);
-					//currentNode = new Node(state.agent_x_position, state.agent_y_position, 0, tempNode);
-
-//				} else {
-	//				Node tempNode = new Node(currentNode.xcord, currentNode.ycord, currentNode.weight,
-		//					currentNode.parent);
-			//		currentNode = new Node(state.agent_x_position, state.agent_y_position, 0, tempNode);
-
-				//}
-
-		//	}
-
+			
+						return NoOpAction.NO_OP;
+		} 
+		// Checks if we should go home next time if all unvisited nodes are visited
 			if (pq.isEmpty()) {
 				goneHome = true;
 			} else {
 				goneHome = false;
 			}
 
-			System.out.println("Queue:");
-
-			for (int i = 0; i < pq.size(); i++) {
-				System.out.println("X: " + pq.get(i).xcord + " Y: " + pq.get(i).ycord);
-			}
-
+			// Looks for a new goal if there ie none
 			if (goalNode == null) {
 				search();
+				
+				// Looks for a new Goal if we have reached the old one
 			} else if (goalNode.xcord == currentNode.xcord && goalNode.ycord == currentNode.ycord) {
 				search();
+				
+				//Checks for walls and adds them to visited.
 			} else if (bump && state.world[goalNode.xcord][goalNode.ycord] == 1) {
 				for (int i = 0; i<pq.size(); i++) {
 					if(goalNode.xcord == pq.get(i).xcord && goalNode.ycord == pq.get(i).ycord) {
@@ -736,6 +628,8 @@ class MyAgentProgram implements AgentProgram {
 			}
 			totalCounter = westCounter + eastCounter + northCounter + southCounter;
 
+			
+			// Enables us to walk towards the goal if we have not reached it.
 			if (totalCounter > 0) {
 			
 				return walk();
