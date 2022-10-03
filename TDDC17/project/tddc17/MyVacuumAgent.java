@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Random;
 
+// TASK 2
 class Node implements Comparable<Node> {
 
 	Integer xcord;
