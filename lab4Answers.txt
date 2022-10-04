@@ -1,0 +1,12 @@
+TASK II
+7
+a) We choose 16 states depending on the angle of the rocket. Where they ranged in a clockwise motion from downlow to the otherside. 
+We choose to have these states both to evaluate how bad they were at the bottom and to make sure that it is rewarded for going upwards earlier. 
+
+We rewarded the different states from -2 to 2 in 0,5 intervalls depending on if they were upwards or downwards, iterating down both clockwise and counter-clockwise from the top. We did not include a reward with the value zero to make sure the learning rate had an impact on all states. 
+
+b) First we send in the state. Than we calculate the Q-value that will be used to decide which action to take next. 
+In the Q-value calculation we take the current state value then adds the learning factor multiplied with the differnece between the new value and the current value. The new value is decided by the reward added with the discount factor multiplied with the current max Q-value. 
+
+8.
+When exploration is turned off it tends to choose not to take any action. We believe this is because it has not explored any positive states to move into yet, and therefore does the least worst it can. Nothing.
