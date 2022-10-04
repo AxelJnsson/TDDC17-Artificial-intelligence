@@ -1,0 +1,80 @@
+Explanation of solution
+The solution was make with the help of the pseudo code from the book on a breadth first search. The main loop is a while loop which continues as long as the queue (frontier) is not empty. A node is first created which removes the first node in the frontier. The nodes state is then checked if it is the same state as the goal. If it is the path to that node is returned. If it is not the node is places in the explored list. After this all children of that node is put in an array. Every childstate in that array is then checked in the for-loop. The state is made into a node to then be checked if that child is the goal. If it is the path to that node is returned. If it  is not it is checked if it is in either the explored list och the frontier. If it is not we check  if it is a depth first search or a breadth first search. If it is a depth first search we add the child to the front of the queue so that we can check its children later on. If it is a breadth first search we add it to the back of the queue. This process is then repeated until the goal state is found.
+
+Theory
+
+1. The states are the following:
+- Initial state is the state or position that the agent starts in
+- State space is all the positions that the agent can be in i.e. the squares that are not walls
+- Goal space is the position that the agent wants to go to
+
+The actions are moving north, east, west and south as well as sucking. 
+
+The branching factor is four. This is because the agent can at to four positions in an action. North, east, south and west. This means that the tree can at have four child branches from a parent branch. The suck action does not affect the branches. 
+
+2. There is no difference because a uniform cost search will be the same as a breadth first search if the cost of each action is one. If the cost is the same for all actions it is just a breadth first search i.e no difference
+
+3. An admissible heuristic is a heuristic which never over estimates the cost to reach a goal. Which means that the estimated cost to get to the goal node is never greater than the actual cost. Whit this we can look at the examples below:
+
+a) (h1+h2)/2 is also admissible because if h1 and h2 are both equal to the actual cost then the average of those two will never be greater than the actual cost and therefore admissible. In this case it can at most be the actual cost and not more.
+
+b) 2h1 is not admissible because if h1 is the actual cost to reach the goal then 2h1 will be two times greater and have therefore over estimated the cost to reach the goal i.e not admissible
+
+c) max(h1,h2) is also admissible because h1 and h2 are admissible and therefore never greater than the actual cost. Choosing the largest of h1 and h2 means that we can not have an estimated cost greater than the actual cost. 
+
+4. Here we can use relaxation. The agent can only move from state X to state Y if Y is adjacent to X and Y is not a wall. If we remove the last part we get: the agent can move from state X to state Y if they are adjacent. This means that we remove the wall condition. h(n) would then be the cost of moving the agent from its x-position to the goals x-position plus the cost of moving the agent from its y-position to the goals y-position. This can never be larger than the actual cost because the agents x- and y-position needs to be the same as the goals. It can not take any shortcuts to do so. The heuristic is therefore admissible. 
+
+The cost function g would be the same because the agent can only move in either x or y. So all the actions it takes to move in x or y would add up the cost by one. It would be something like: g = difference(agent_x, goal_x) + difference(agent_y, goal_y)
+
+5. 
+The memory usage is measured in how much memory it takes to store the nodes that we have traversed.
+
+The breadth first algorithm does not care about the costs of each node. Here the algorithm searches all of the parents nodes before continuing with searing all of the childrens’ nodes. First it searches the parent node A’s children which are B and C. After this it continues with node B and searches its children nodes D and E. After this it continues with Cs child node F. Here it does not search the node D because it has already been searched before. Then it continues with E’s child which happens to be our goal G and then it stops. D has no children. 
+The memory usage here is calculated by adding the number of nodes together. Cost = 7 memory units
+
+The depth first algorithm does not care about costs either. Here the algorithm starts by checking the start nodes first child. After this it continues with that childs child and so on. It starts by looking at A’s child B. Then it checks B’s child E and lastly it checks E’s child G which happens to be the goal and therefore stops. 
+The cost here is: Cost = 4 units
+
+The uniform-cost search does care about the cost of traversing a node. It starts by checking which child of A that is the cheapest. This is C at a cost of 3. Then it checks which route is the next cheapest. To go from A to B costs 4, but to go from A to one of C’s child D costs 9 and to F costs 8. A to B is therefore cheapest at 4 in cost. It then continues in the same way where the path from A to F is the cheapest of the options. Then it is A to D and then finally A to G which is the goal. Then it stops. 
+The cost here is: Cost = 6
+
+
+6. 
+An algorithm is complete if if it is guaranteed to fins a solution if there is one and return failure when there is not.
+
+An algorithm is optimal if it finds a solution with the lowest path cost of all solutions
+
+Best-first search:
+Complete: The best search is not complete because it can get stuck in cycles and not find a solution
+Optimal: It is not guaranteed to be optimal because it can choose a path which does not have the lowest cost. It chooses the node with the lowest cost where we are currently standing and does not care about other paths at the moment. 
+
+
+Breadth-first search:
+Complete: Breadth first is complete even if the graph is infinite. It will eventually find the goal state and return it. 
+Optimal: Breadth first search is optimal if the actions are unweighted. Because it traverses a row at a time it will always find the optimal solution. If actions are weighted it is not optimal
+
+Uniform-cost search:
+Complete: is complete because if a goal state exists it must have a finite length that can be found
+Optimal: is optimal if all actions have non negative costs. If we shall find a path with the lowest cost the uniform cost search will find it because it always traverses the path with the lowest cost
+
+Depth-first search:
+Complete: Depth first search is not complete if the graph is infinite. It can traverse a branch and never reach the goal and is therefore not complete. 
+Optimal: is not optimal because it traverses in depth. This means that it can traverse the left side first and find the goal (if it is in there), but another branch can have a more optimal path. 
+
+Iterative deepening search:
+Complete: it is complete if the states are finite like with breadth first search
+Optimal: it is optimal if all actions have the same cost, this is because it uses breadth first search which is optimal if all actions have the same cost. 
+
+Bidirectional search:
+Complete: is complete if BFS is used in both the search from root to goal and from goal to root
+Optimal: is optimal if BFS is used for search and all actions have the same cost
+
+Greedy best-first search:
+Complete: is complete in finite state spaces, but not in infinite ones.
+Optimal: is optimal if the heuristic function chosen is admissible.
+
+A* search:
+Complete: Is complete if the graph is finite because it will always traverse the whole graph until the solution is found or not
+Optimal: Is optimal beacuse A* search uses both uniformed cost search and greedy search algorithms. It calculates the cost from the root node to the current node and estimates the cost from the current node to the goal node and this makes it optimal. 
+
+7. We would pick a breadth-first search because it is optimal if the cost is one. Here we would search for nodes that have not been visited. We would do this by adding the neighbors of the agent to a queue if they have not been visited or are already in the queue. When the agent has reached one of its neighbors it would from that node do the same to find new neighbors and put them in the queue. This would mean that even if we don not know what the environment looks like we would know that we have explored everything when the queue is empty because all nodes should have been a neighbor at some point. 

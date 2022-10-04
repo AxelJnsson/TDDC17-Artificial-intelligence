@@ -1,0 +1,5 @@
+INDEX VERSION 1.131+/home/axejo347/TDDC17/princes-of-ai/TDDC17/lab2/lab2_workspace/.metadata/.plugins/org.eclipse.jdt.core
+2949097923.index
+3536394000.index
+1865797976.index
+2574934564.index

@@ -1,0 +1,9 @@
+Theory
+
+
+1. The states are the following:
+- Initial state is the state or position that the agent starts in
+- State space is all the positions that the agent can be in i.e. the squares that are not walls
+- Goal space is the position that the agent wants to go to
+
+The branching factor is at max four. This is because the agent can at most move to four positions in an action. North, east, south and west. This means that the tree can at most have four child branches from a parent branch. 
