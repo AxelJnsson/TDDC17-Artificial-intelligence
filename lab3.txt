@@ -92,5 +92,20 @@ Before bringin the bike: Y1 = 0,99001
 After bringing the bike: Y2 = 0,99505
 Changes in odds: 0,99505-0,99001 = 0,00504
 
+Part IV
+
+1. Yes we can with our model compensate if we get a better pump which lowers the probability of pump failure and a meltdown. 
+
+2. We can know the probability if we add a node that is dependent on if the car moves and if it is a meltdown and observers that he does not know what to do. And we add a node that collects if one or more warning goes on and than he always reacts. And we also observe that he does not know what to do. 
+probabilty of survival is 0,96531.
+
+3. It is unrealistic to assume that a persons behaviour will follow these patterns and a persons behaviour is dependent on way more variables than we have in our bayesian network. Simply it is a simple model of a complex reality. 
+
+4. For a low amount of days we serialize nodes with true or false for each day if they have icyWeather or not. This way if there is no icyWeather multiple days in a row the probability wil accumulate for it being one today. 
+
+
+
+
+
 
 
