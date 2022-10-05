@@ -4,12 +4,12 @@ b) if both warnings indaicate failure 14,5 %.
 P(meltdown|WaterLeakWarning,PumpfailureWarning) = 0,145
 If both fail 20%
 p(meltdown|WaterLeak,PumpFailure)=0,2
-c) Difficult to have repeated observations of a meltdown.?? Dubbelkolla!
-d) Either discrete temperatures or contiunous temperatures how it affects the probability distribution?
-With a discret domain the probability distribution for P(WaterLeak|temperature) 
+c) Difficult to have repeated observations of a meltdown or other occurences to model probability. Furthermore, it is difficult to accurately model dependent probabilities between different variables. 
+d) You can use binary variables to model a contiunous spectrum of temperatures by setting the variables true or false depending on if the temperature is within the
+limits for that node. For example one node could be true if the temperature is between 0 and 15 degress celcius. Otherwise false. 
 
 6. 
-a) It represents the probabilty of an outcome for all different combinations of values for variables.
+a) It represents the probabilty of an outcome for all different combinations of values for variables. If the nodes parents != null then it is a conditional probability it shows.
 
 b) Joint probability distribution is the propability of a state depending on the states of other variables. 
 An example could be: what is the probabilty that X=True if Y=False and Z=True i.e. P(X=T|Y=F,Z=T)
@@ -91,6 +91,11 @@ Changes in odds of surviving due to trying the radio
 Before bringin the bike: Y1 = 0,99001
 After bringing the bike: Y2 = 0,99505
 Changes in odds: 0,99505-0,99001 = 0,00504
+
+We can model all functions with Bayesian networks. Though i might become physically impossible due to the amount of dependent variables. 
+Using exact interference methond it would require a size 2^N for N different variables.
+
+Alternatives to this is to use approximate inference. 
 
 Part IV
 
