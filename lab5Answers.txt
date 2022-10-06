@@ -5,3 +5,9 @@ Task 2.
 The math for the dense layer. We multiplied the 28*28 vector giving us 784 inputs. To get the dense layer the inputs needed to be multiplied with the number of neurons which is 128. 784*128 = 100352. However, since we also needed to add one parameter for the line intercept constant it amounted to 100352 + 128 = 100480.
 
 Task 3. 
+Batch size: 
+1 192s 0,8395
+10 22s 0,8438
+100 4s  0,8142
+1000 2s 0,7189
+60000 1s 0,12
