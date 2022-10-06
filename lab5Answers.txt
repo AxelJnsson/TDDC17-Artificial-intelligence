@@ -1,0 +1,7 @@
+Task 1. 
+The input needed to calculate the gradient were loss and parameters due to us calculating the gradient of the loss with regards to our input parameters.
+
+Task 2.
+The math for the dense layer. We multiplied the 28*28 vector giving us 784 inputs. To get the dense layer the inputs needed to be multiplied with the number of neurons which is 128. 784*128 = 100352. However, since we also needed to add one parameter for the line intercept constant it amounted to 100352 + 128 = 100480.
+
+Task 3. 
