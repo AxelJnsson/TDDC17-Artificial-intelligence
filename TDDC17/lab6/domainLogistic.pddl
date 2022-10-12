@@ -13,7 +13,7 @@
 ;; ?c.
 
 (define (domain logistics)
-  (:requirements :strips)
+  (:requirements :strips :disjunctive-preconditions :negative-preconditions)
   (:predicates
 
    ;; Static predicates:
@@ -21,7 +21,15 @@
    (location ?l) (airport ?a) (city ?c) (loc ?l ?c)
    (train ?tr) (trainStation ?trs)
 
+
+   (smallVehicle ?st) ;;small vehicle
+   (largeVehicle ?lt) ;;large vehicle
+
+   (smallPackage ?so) ;; small package
+   (largePackage ?lo) ;;large package
+
    ;; Non-static predicates:
+   (full ?v) ;; Vechicle is full
    (at ?x ?l) ;; ?x (package or vehicle) is at location ?l
    (in ?p ?v) ;; package ?p is in vehicle ?v
    )
@@ -29,18 +37,27 @@
   ;; Actions for loading and unloading packages.
   ;; By declaring all trucks and airplanes to be also "vehicle", we
   ;; can use the same load/unload operator for both (otherwise we
-  ;; would need one for each subtype of vehicle).
+  ;; would need one for each subtype of vehicle). 
+
+  ;; A small vehicle may only have a small package
+  ;; A large vehicle may load a large or small package
   (:action load
     :parameters (?o ?v ?l)
     :precondition (and (object ?o) (vehicle ?v) (location ?l)
-		       (at ?v ?l) (at ?o ?l))
-    :effect (and (in ?o ?v) (not (at ?o ?l))))
+		                (at ?v ?l) (at ?o ?l) (not (full ?v))
+                  (or (and (smallVehicle ?v) (smallPackage ?o))
+           (and(largeVehicle ?v) (or (largePackage ?o) (smallPackage ?o)))
+           )
+           )
+    :effect (and (full ?v)(in ?o ?v) (not (at ?o ?l))))
+
+    
 
   (:action unload
     :parameters (?o ?v ?l)
     :precondition (and (object ?o) (vehicle ?v) (location ?l)
-		       (at ?v ?l) (in ?o ?v))
-    :effect (and (at ?o ?l) (not (in ?o ?v))))
+		       (at ?v ?l) (in ?o ?v) (full ?v))
+    :effect (and (not(full ?v))(at ?o ?l) (not (in ?o ?v))))
 
   ;; Drive a truck between two locations in the same city.
   ;; By declaring all locations, including airports, to be of type
